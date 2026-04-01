@@ -130,6 +130,21 @@
         .untied .ribbon-left { transform: translateX(-100%); }
         .untied .ribbon-right { transform: translateX(100%); }
         .untied .knot { transform: scale(0); opacity: 0; }
+        /* ================== VIDEO LAYOUT ================== */
+.video-row {
+    display: flex;              /* makes videos sit side-by-side */
+    justify-content: center;    /* centers them horizontally */
+    gap: 10px;                  /* space between videos */
+    width: 100%;
+    margin-top: 20px;
+}
+
+.video-row video {
+    width: 45%;                 /* each video takes ~half width */
+    max-width: 180px;           /* prevents them from becoming too large */
+    border-radius: 8px;
+    background: black;
+}
         @media (max-width: 480px) {
     .video-row video {
         width: 42%;
