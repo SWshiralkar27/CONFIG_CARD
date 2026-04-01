@@ -121,7 +121,20 @@
     pointer-events: auto;
     visibility: visible;
 }
+   /* ================== SIZE OF DUDU ================== */
+        #bubu-gif {
+    width: 70px;          /* reduce size (adjust 60–90 as you like) */
+    margin-top: 20px;
 
+    opacity: 0;           /* initially hidden */
+animation: moveSide 2s infinite ease-in-out;}
+ /* ================== MOVEMENT OF DUDU ================== */ 
+        @keyframes moveSide {
+    0% { transform: translateX(-20px); }
+    50% { transform: translateX(20px); }
+    100% { transform: translateX(-20px); }
+}
+        
         /* ================== RIBBON ================== */
         #ribbon-container { position: absolute; width: 100%; height: 100%; z-index: 300; display: flex; justify-content: center; align-items: center; }
         .ribbon-half { position: absolute; width: 50%; height: 40px; background: var(--gold); transition: 1s; }
