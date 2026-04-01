@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- ================== ROOT HTML DOCUMENT ================== -->
+<head>
+    <!-- ========== META CONFIGURATION ========== -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <!-- ========== PAGE TITLE ========== -->
+    <title>A Special Surprise for Simple</title>
+
+    <!-- ========== GLOBAL STYLES ========== -->
+    <style>
+        /* ================== THEME VARIABLES ================== */
+        :root { --gold: #FFD700; --velvet: #004d40; --cream: #fdfaf6; }
+
+        /* ================== BASE PAGE LAYOUT ================== */
+        html, body { 
+            margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; 
+            background: radial-gradient(circle, #00251a, #000000);
+            display: flex; justify-content: center; align-items: center; 
+            font-family: 'Georgia', serif; perspective: 1500px; 
+        }
+
+        /* ================== CARD FRAME ================== */
+        #card-frame {
+            position: absolute;
+            width: 90vw; max-width: 456px; height: 80vh; max-height: 606px; 
+            padding: 3px;
+            background: linear-gradient(90deg, #ff0000, #00ff00, #0000ff, #ff00ff, #ff0000);
+            background-size: 400% 400%;
+            animation: moveLights 6s linear infinite;
+            border-radius: 15px;
+            z-index: 1;
+        }
+
+        @keyframes moveLights {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+
+        /* ================== CARD CORE ================== */
+        #card { 
+            width: 100%; height: 100%; 
+            background: var(--velvet);
+            position: relative; 
+            transform-style: preserve-3d; 
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        /* ================== DOOR MECHANISM ================== */
+        .door { 
+            position: absolute; width: 50%; height: 100%; background: var(--velvet); 
+            border: 1.5px solid var(--gold); z-index: 100; 
+            transition: transform 2s cubic-bezier(0.45, 0.05, 0.55, 0.95); 
+            transform-origin: left; display: flex; align-items: center; 
+            justify-content: center; color: var(--gold); cursor: pointer; 
+            backface-visibility: hidden; font-weight: bold; 
+        }
+        .door.left { left: 0; border-right: none; }
+        .door.right { right: 0; transform-origin: right; border-left: none; }
+        .open .door.left { transform: rotateY(-140deg); }
+        .open .door.right { transform: rotateY(140deg); }
+
+        /* ================== MAIN STAGE ================== */
+        #stage { 
+            position: absolute; width: 100%; height: 100%; 
+            background: var(--cream); z-index: 10; 
+            display: flex; flex-direction: column; align-items: center; 
+            justify-content: center; text-align: center; 
+        }
+
+        /* ================== CAKE ================== */
+        .cake { width: 220px; height: 130px; background: #5d3a1a; border-radius: 10px; position: relative; margin-top: 40px; transition: 1s ease; }
+        .frosting { position: absolute; top: -15px; width: 100%; height: 40px; background: #fff; border-radius: 50% 50% 0 0; }
+
+        /* ================== CANDLES ================== */
+        .candle { width: 10px; height: 45px; background: linear-gradient(to bottom, #d4af37, #f1c40f); position: relative; display: inline-block; margin: 0 12px; cursor: pointer; top: -55px; border-radius: 2px; }
+        .flame { position: absolute; top: -18px; left: 50%; transform: translateX(-50%); width: 14px; height: 22px; background: radial-gradient(#fff, #ffae00); border-radius: 50%; animation: flicker 0.15s infinite; }
+        @keyframes flicker { 0% { transform: translateX(-50%) scale(1); } 50% { transform: translateX(-52%) scale(1.1); } 100% { transform: translateX(-48%) scale(1); } }
+        .extinguished .flame { display: none; }
+
+        /* ================== PROMPTS ================== */
+        #side-prompt { 
+            position: absolute; top: 20%; left: 50%; 
+            transform: translate(-50%, -50%)!important; 
+            width: 90%; max-width: 400px; 
+            color: var(--velvet); font-weight: bold; 
+            opacity: 0; transition: opacity 1s ease;
+            font-style: italic; z-index: 150; text-align: center;
+        }
+        .open #side-prompt { opacity: 1; }
+
+        #eat-prompt { display: none; margin-top: 30px; font-weight: bold; color: #700; cursor: pointer; font-size: 1.2rem; }
+
+        /* ================== FINAL REVEAL ================== */
+        #cloth { 
+            position: absolute; top: -100%; left: 0; width: 100%; height: 100%; 
+            background: linear-gradient(to bottom, #800, #400); z-index: 200; 
+            display: flex; flex-direction: column; align-items: center; 
+            justify-content: center; color: var(--gold); 
+            transition: top 2.5s;
+        }
+        #cloth.roll-down { top: 0; }
+
+        /* ================== RIBBON ================== */
+        #ribbon-container { position: absolute; width: 100%; height: 100%; z-index: 300; display: flex; justify-content: center; align-items: center; }
+        .ribbon-half { position: absolute; width: 50%; height: 40px; background: var(--gold); transition: 1s; }
+        .ribbon-left { left: 0; } .ribbon-right { right: 0; }
+        .knot { width: 60px; height: 60px; background: var(--gold); border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; }
+        .untied .ribbon-left { transform: translateX(-100%); }
+        .untied .ribbon-right { transform: translateX(100%); }
+        .untied .knot { transform: scale(0); opacity: 0; }
+    </style>
+</head>
+
+<body>
+<!-- ================== MAIN INTERACTIVE CARD ================== -->
+
+<div id="card-frame">
+    <!-- ===== OUTER BORDER ===== -->
+
+    <div id="card">
+        <!-- ===== CARD WRAPPER ===== -->
+
+        <!-- ===== ENTRY RIBBON ===== -->
+        <div id="ribbon-container" onclick="untieRibbon()">
+            <div class="ribbon-half ribbon-left"></div>
+            <div class="knot">OPEN</div>
+            <div class="ribbon-half ribbon-right"></div>
+        </div>
+
+        <!-- ===== DOORS ===== -->
+        <div class="door left">FOR</div>
+        <div class="door right">SIMPLE</div>
+
+        <!-- ===== MAIN STAGE ===== -->
+        <div id="stage">
+
+            <!-- ===== PROMPT ===== -->
+            <div id="side-prompt">"make a wish and blow off the candles"</div>
+
+            <!-- ===== CAKE ===== -->
+            <div class="cake" id="cakeNode">
+                <div class="frosting"></div>
+
+                <!-- ===== CANDLES ===== -->
+                <div id="candle-container">
+                    <div class="candle" onclick="extinguish()"><div class="flame"></div></div>
+                    <div class="candle" onclick="extinguish()"><div class="flame"></div></div>
+                    <div class="candle" onclick="extinguish()"><div class="flame"></div></div>
+                </div>
+            </div>
+
+            <!-- ===== NEXT ACTION ===== -->
+            <div id="eat-prompt" onclick="revealFinale()">eat my darling</div>
+        </div>
+
+        <!-- ===== FINAL CELEBRATION ===== -->
+        <div id="cloth">
+            <h2>HAPPY BIRTHDAY</h2>
+            <h1>SIMPLE</h1>
+            <p>My Angel & My Bubu darling</p>
+
+            <!-- ===== VIDEOS ===== -->
+            <video id="v1" src="gg2.mp4" loop></video>
+            <video id="v2" src="gg3.mp4" loop></video>
+
+            <!-- ===== REPLAY ===== -->
+            <button id="replay-btn" onclick="location.reload()">Replay Card</button>
+        </div>
+    </div>
+</div>
+
+<audio id="bdaySong" src="birthday.mp3"></audio>
+
+<script>
+/* ================== EXPERIENCE FLOW ==================
+1. Ribbon click → untieRibbon()
+2. Doors open → openCard()
+3. Candles click → extinguish()
+4. Finale → revealFinale()
+====================================================== */
+
+let musicStarted = false;
+
+// Ribbon interaction
+function untieRibbon() {
+    document.getElementById('ribbon-container').classList.add('untied');
+    setTimeout(() => {
+        document.getElementById('ribbon-container').style.display = 'none';
+        openCard();
+    }, 800);
+}
+
+// Opens card
+function openCard() {
+    document.getElementById('card').classList.add('open');
+}
+
+// Candle interaction
+function extinguish() {
+    if (musicStarted) return;
+    musicStarted = true;
+
+    document.querySelectorAll('.candle').forEach(c => c.classList.add('extinguished'));
+    document.getElementById('bdaySong').play().catch(() => {});
+
+    setTimeout(() => {
+        document.getElementById('eat-prompt').style.display = 'block';
+    }, 2000);
+}
+
+// Final reveal
+function revealFinale() {
+    document.getElementById('cloth').classList.add('roll-down');
+    document.getElementById('v1').play();
+    document.getElementById('v2').play();
+}
+</script>
+
+</body>
+</html>
