@@ -130,6 +130,11 @@
         .untied .ribbon-left { transform: translateX(-100%); }
         .untied .ribbon-right { transform: translateX(100%); }
         .untied .knot { transform: scale(0); opacity: 0; }
+        @media (max-width: 480px) {
+    .video-row video {
+        width: 42%;
+    }
+}
     </style>
 </head>
 
@@ -176,18 +181,24 @@
         </div>
 
         <!-- ===== FINAL CELEBRATION ===== -->
-        <div id="cloth">
-            <h2>HAPPY BIRTHDAY</h2>
-            <h1>DEAR XXX</h1>
-            <p>My LOVE & My Darling</p>
 
-            <!-- ===== VIDEOS ===== -->
-            <video id="v1" src="gg2.mp4" loop></video>
-            <video id="v2" src="gg3.mp4" loop></video>
+<div id="cloth">
+    <h2>HAPPY BIRTHDAY</h2>
+    <h1>DEAR XXX</h1>
+    <p>My LOVE & My Darling</p>
 
-            <!-- ===== REPLAY ===== -->
-            <button id="replay-btn" onclick="location.reload()">Replay Card</button>
-        </div>
+    <!-- ===== VIDEOS ROW ===== -->
+    <div class="video-row">
+        <video id="v1" src="gg2.mp4" loop playsinline></video>
+        <video id="v2" src="gg3.mp4" loop playsinline></video>
+    </div>
+
+    <!-- ===== DANCING GIF ===== -->
+    <img id="bubu-gif" src="dudu_dance.gif" alt="Dancing">
+
+    <!-- ===== REPLAY ===== -->
+    <button id="replay-btn" onclick="location.reload()">Replay Card</button>
+</div>
     </div>
 </div>
 
