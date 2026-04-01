@@ -129,7 +129,7 @@
     opacity: 0;           /* initially hidden */
 animation: moveSide 2s infinite ease-in-out;}
         #bubu-gif-2 {
-    width: 60px;
+    width: 50px;
     margin-top: 20px;
 
     opacity: 0;
@@ -203,6 +203,20 @@ animation: moveSide 2s infinite ease-in-out;}
     gap: 20px;   /* space between GIFs */
     margin-top: 20px;
 }
+        /* ================== HEARTBEAT TEXT ================== */
+.heartbeat-text {
+    color: white;
+    animation: heartbeat 1.5s infinite ease-in-out;
+}
+
+/* ================== HEARTBEAT ANIMATION ================== */
+@keyframes heartbeat {
+    0%   { transform: scale(1); opacity: 1; }
+    25%  { transform: scale(1.1); opacity: 0.85; }
+    50%  { transform: scale(1); opacity: 1; }
+    75%  { transform: scale(1.1); opacity: 0.85; }
+    100% { transform: scale(1); opacity: 1; }
+}
     </style>
 </head>
 
@@ -252,7 +266,7 @@ animation: moveSide 2s infinite ease-in-out;}
 
 <div id="cloth">
     <h2>HAPPY BIRTHDAY</h2>
-    <h1>DEAR XXX</h1>
+    <h1 class="heartbeat-text">DEAR XXX</h1>
     <p>My LOVE & My Darling</p>
 
     <!-- ===== VIDEOS ROW ===== -->
