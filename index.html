@@ -123,16 +123,29 @@
 }
    /* ================== SIZE OF DUDU ================== */
         #bubu-gif {
-    width: 70px;          /* reduce size (adjust 60–90 as you like) */
+    width: 60px;          /* reduce size (adjust 60–90 as you like) */
     margin-top: 20px;
 
     opacity: 0;           /* initially hidden */
 animation: moveSide 2s infinite ease-in-out;}
+        #bubu-gif-2 {
+    width: 60px;
+    margin-top: 20px;
+
+    opacity: 0;
+
+    animation: moveSideReverse 2s infinite ease-in-out;
+}
  /* ================== MOVEMENT OF DUDU ================== */ 
         @keyframes moveSide {
     0% { transform: translateX(-20px); }
     50% { transform: translateX(20px); }
     100% { transform: translateX(-20px); }
+}
+        @keyframes moveSideReverse {
+    0% { transform: translateX(20px); }
+    50% { transform: translateX(-20px); }
+    100% { transform: translateX(20px); }
 }
   /* ================== CONFETTI ================== */
 .confetti {
@@ -242,6 +255,7 @@ animation: moveSide 2s infinite ease-in-out;}
 
     <!-- ===== DANCING GIF ===== -->
     <img id="bubu-gif" src="dudu_dance.gif" alt="Dancing">
+    <img id="bubu-gif-2" src="dancing_bubu.gif" alt="Dancing">
 
     <!-- ===== REPLAY ===== -->
     <button id="replay-btn" onclick="location.reload()">Replay Card</button>
@@ -300,6 +314,7 @@ createConfetti();
     // 🔥 Show GIF after 3 seconds
     setTimeout(() => {
         document.getElementById('bubu-gif').style.opacity = "1";
+        document.getElementById('bubu-gif-2').style.opacity = "1";
     }, 3000);
 
     // 🔥 Show Replay button after 60 seconds
