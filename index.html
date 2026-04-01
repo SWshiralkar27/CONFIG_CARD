@@ -271,9 +271,22 @@ function extinguish() {
 
 // Final reveal
 function revealFinale() {
+    // Show cloth
     document.getElementById('cloth').classList.add('roll-down');
+
+    // Play videos
     document.getElementById('v1').play();
     document.getElementById('v2').play();
+
+    // 🔥 Show GIF after 3 seconds
+    setTimeout(() => {
+        document.getElementById('bubu-gif').style.opacity = "1";
+    }, 3000);
+
+    // 🔥 Show Replay button after 60 seconds
+    setTimeout(() => {
+        document.getElementById('replay-btn').style.opacity = "1";
+    }, 60000);
 }
 </script>
 
