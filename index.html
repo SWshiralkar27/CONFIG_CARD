@@ -195,6 +195,14 @@ animation: moveSide 2s infinite ease-in-out;}
         width: 42%;
     }
 }
+  /* following is to add space between GIFs */      
+                .gif-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;   /* space between GIFs */
+    margin-top: 20px;
+}
     </style>
 </head>
 
@@ -254,8 +262,12 @@ animation: moveSide 2s infinite ease-in-out;}
     </div>
 
     <!-- ===== DANCING GIF ===== -->
-    <img id="bubu-gif" src="dudu_dance.gif" alt="Dancing">
-    <img id="bubu-gif-2" src="dancing_bubu.gif" alt="Dancing">
+<div class="gif-row">
+    <img id="bubu-gif" src="dudu_dance.gif">
+     <img id="bubu-gif-2" src="dancing_bubu1.gif" alt="Dancing">
+</div>
+
+     
 
     <!-- ===== REPLAY ===== -->
     <button id="replay-btn" onclick="location.reload()">Replay Card</button>
