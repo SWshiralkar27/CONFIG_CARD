@@ -1,378 +1,938 @@
 <!DOCTYPE html>
+<!-- ═══════════════════════════════════════════════════════════════════
+     DOCTYPE — Tells the browser this is a modern HTML5 document.
+     Must always be the very first line of every HTML file.
+     ═══════════════════════════════════════════════════════════════════ -->
+
 <html lang="en">
-<!-- ================== ROOT HTML DOCUMENT ================== -->
+<!-- <html> wraps everything. lang="en" tells assistive tools the language. -->
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     ██  HEAD — invisible setup zone
+     Contains: character encoding, mobile settings, page title, all CSS.
+     Nothing written here is directly visible to the user.
+     ═══════════════════════════════════════════════════════════════════ -->
 <head>
-    <!-- ========== META CONFIGURATION ========== -->
+
+    <!-- UTF-8: support for all characters — English, Devanagari, emojis -->
     <meta charset="UTF-8">
+
+    <!-- viewport: makes the card look correct on mobile phones.
+         - width=device-width : use phone's real screen width, not desktop width
+         - initial-scale=1.0  : start at normal zoom (not zoomed in/out)
+         - maximum-scale=1.0  : prevent accidental pinch-to-zoom
+         - user-scalable=no   : locks the zoom completely -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-    <!-- ========== PAGE TITLE ========== -->
+    <!-- Text shown on the browser tab at the top of the screen -->
     <title>A Special Greeting Card</title>
 
-    <!-- ========== GLOBAL STYLES ========== -->
+    <!-- ═══════════════════════════════════════════════════════════════
+         ██  STYLE — all visual design rules
+         CSS controls: colours, sizes, positions, animations, visibility.
+         Format is always:   selector { property: value; }
+         #id    → targets ONE specific element
+         .class → targets a GROUP of elements
+         ═══════════════════════════════════════════════════════════════ -->
     <style>
-        /* ================== THEME VARIABLES ================== */
-        :root { --gold: #FFD700; --velvet: #004d40; --cream: #fdfaf6; }
 
-        /* ================== BASE PAGE LAYOUT ================== */
-        html, body { 
-            margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; 
-            background: radial-gradient(circle, #00251a, #000000);
-            display: flex; justify-content: center; align-items: center; 
-            font-family: 'Georgia', serif; perspective: 1500px; 
+        /* ── GLOBAL COLOUR PALETTE ─────────────────────────────────────
+           :root stores reusable colour "variables" — like named paint pots.
+           Writing var(--gold) anywhere in CSS uses #FFD700 automatically.
+           Change the value here once and it updates everywhere instantly. */
+        :root {
+            --gold:   #FFD700;  /* shiny yellow  — ribbon, borders, buttons */
+            --velvet: #004d40;  /* dark teal      — card doors & backgrounds */
+            --cream:  #fdfaf6;  /* warm off-white — inner stage background   */
         }
 
-        /* ================== CARD FRAME ================== */
+        /* ── PAGE BACKGROUND & CENTERING ──────────────────────────────
+           html + body fill the full screen.
+           - overflow:hidden   : nothing scrolls or overflows off screen
+           - radial-gradient   : dark green center fading to black — spotlight feel
+           - display:flex +
+             justify/align center : pins the card perfectly to the middle
+           - perspective:1500px  : adds 3D depth — needed for doors to swing open */
+        html, body {
+            margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden;
+            background: radial-gradient(circle, #00251a, #000000);
+            display: flex; justify-content: center; align-items: center;
+            font-family: 'Georgia', serif; perspective: 1500px;
+        }
+
+        /* ── CARD FRAME ────────────────────────────────────────────────
+           #card-frame is the glowing rainbow border around the card.
+           - padding:3px          : thin gap between the rainbow and card inside
+           - background gradient  : rainbow that scrolls sideways endlessly
+           - animation moveLights : slides the gradient left→right in a loop
+           - border-radius:15px   : rounded corners on the outer glow */
         #card-frame {
             position: absolute;
-            width: 90vw; max-width: 456px; height: 80vh; max-height: 606px; 
+            width: 90vw; max-width: 456px; height: 80vh; max-height: 606px;
             padding: 3px;
             background: linear-gradient(90deg, #ff0000, #00ff00, #0000ff, #ff00ff, #ff0000);
             background-size: 400% 400%;
             animation: moveLights 6s linear infinite;
             border-radius: 15px;
-            z-index: 1;
+            z-index: 1; /* z-index controls layer order — higher = on top */
         }
 
+        /* moveLights slides the rainbow gradient sideways forever */
         @keyframes moveLights {
-            0% { background-position: 0% 50%; }
+            0%   { background-position: 0% 50%; }
             100% { background-position: 100% 50%; }
         }
 
-        /* ================== CARD CORE ================== */
-        #card { 
-            width: 100%; height: 100%; 
+        /* ── CARD CORE ─────────────────────────────────────────────────
+           #card is the actual greeting card sitting inside the glowing border.
+           - transform-style:preserve-3d : makes child elements (doors) rotate in real 3D
+           - overflow:hidden             : clips anything that goes outside the card edges */
+        #card {
+            width: 100%; height: 100%;
             background: var(--velvet);
-            position: relative; 
-            transform-style: preserve-3d; 
+            position: relative;
+            transform-style: preserve-3d;
             border-radius: 12px;
             overflow: hidden;
         }
 
-        /* ================== DOOR MECHANISM ================== */
-        .door { 
-            position: absolute; width: 50%; height: 100%; background: var(--velvet); 
-            border: 1.5px solid var(--gold); z-index: 100; 
-            transition: transform 2s cubic-bezier(0.45, 0.05, 0.55, 0.95); 
-            transform-origin: left; display: flex; align-items: center; 
-            justify-content: center; color: var(--gold); cursor: pointer; 
-            backface-visibility: hidden; font-weight: bold; 
+        /* ── DOOR MECHANISM ────────────────────────────────────────────
+           Two doors cover the card — left and right.
+           - z-index:100          : doors sit ON TOP of the stage/cake behind them
+           - transition:transform : smooth 2-second swing animation
+           - transform-origin:left: hinge is on the LEFT edge, like a real door */
+        .door {
+            position: absolute; width: 50%; height: 100%; background: var(--velvet);
+            border: 1.5px solid var(--gold); z-index: 100;
+            transition: transform 2s cubic-bezier(0.45, 0.05, 0.55, 0.95);
+            transform-origin: left;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--gold); cursor: pointer;
+            backface-visibility: hidden; font-weight: bold;
         }
-        .door.left { left: 0; border-right: none; }
+        /* Left door: hinges on its left edge */
+        .door.left  { left: 0; border-right: none; }
+        /* Right door: hinges on its right edge */
         .door.right { right: 0; transform-origin: right; border-left: none; }
-        .open .door.left { transform: rotateY(-140deg); }
-        .open .door.right { transform: rotateY(140deg); }
 
-        /* ================== MAIN STAGE ================== */
-        #stage { 
-            position: absolute; width: 100%; height: 100%; 
-            background: var(--cream); z-index: 10; 
-            display: flex; flex-direction: column; align-items: center; 
-            justify-content: center; text-align: center; 
+        /* When JS adds "open" class to #card, CSS swings both doors away */
+        .open .door.left  { transform: rotateY(-140deg); } /* swings left  */
+        .open .door.right { transform: rotateY(140deg);  } /* swings right */
+
+        /* ── MAIN STAGE ────────────────────────────────────────────────
+           #stage is the cream inner area revealed when doors open.
+           Holds: aukshan ceremony, cake, candles, prompts.
+           - z-index:10 : behind doors (z:100) but above card background */
+        #stage {
+            position: absolute; width: 100%; height: 100%;
+            background: var(--cream); z-index: 10;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            text-align: center;
         }
 
-        /* ================== CAKE ================== */
-        .cake { width: 220px; height: 130px; background: #5d3a1a; border-radius: 10px; position: relative; margin-top: 40px; transition: 1s ease; }
-        .frosting { position: absolute; top: -15px; width: 100%; height: 40px; background: #fff; border-radius: 50% 50% 0 0; }
-
-        /* ================== CANDLES ================== */
-        .candle { width: 10px; height: 45px; background: linear-gradient(to bottom, #d4af37, #f1c40f); position: relative; display: inline-block; margin: 0 12px; cursor: pointer; top: -55px; border-radius: 2px; }
-        .flame { position: absolute; top: -18px; left: 50%; transform: translateX(-50%); width: 14px; height: 22px; background: radial-gradient(#fff, #ffae00); border-radius: 50%; animation: flicker 0.15s infinite; }
-        @keyframes flicker { 0% { transform: translateX(-50%) scale(1); } 50% { transform: translateX(-52%) scale(1.1); } 100% { transform: translateX(-48%) scale(1); } }
-        .extinguished .flame { display: none; }
-
-        /* ================== PROMPTS ================== */
-        #side-prompt { 
-            position: absolute; top: 20%; left: 50%; 
-            transform: translate(-50%, -50%)!important; 
-            width: 90%; max-width: 400px; 
-            color: var(--velvet); font-weight: bold; 
+        /* ── CANDLE BLOW INSTRUCTION ───────────────────────────────────
+           Italic text that fades in when card opens, fades out when candles blown.
+           - opacity:0             : invisible at start
+           - .open #side-prompt    : becomes visible when "open" class on #card */
+        #side-prompt {
+            position: absolute; top: 20%; left: 50%;
+            transform: translate(-50%, -50%) !important;
+            width: 90%; max-width: 400px;
+            color: var(--velvet); font-weight: bold;
             opacity: 0; transition: opacity 1s ease;
             font-style: italic; z-index: 150; text-align: center;
+            display: none; /* hidden until aukshan completes — shown by JS */
         }
-        .open #side-prompt { opacity: 1; }
+        /* When card gets "open" class — BUT we now control this manually via JS */
+        .open #side-prompt { opacity: 0; } /* overridden — JS controls it instead */
 
-        #eat-prompt { display: none; margin-top: 30px; font-weight: bold; color: #700; cursor: pointer; font-size: 1.2rem; }
+        /* ── CAKE ──────────────────────────────────────────────────────
+           Brown rectangular cake with white frosting on top.
+           Starts hidden (display:none) — JS shows it after aukshan completes. */
+        .cake {
+            width: 220px; height: 130px; background: #5d3a1a;
+            border-radius: 10px; position: relative;
+            margin-top: 40px; transition: 1s ease;
+            display: none; /* hidden until aukshan finishes */
+        }
+        /* White icing blob on top of the cake */
+        .frosting {
+            position: absolute; top: -15px; width: 100%; height: 40px;
+            background: #fff; border-radius: 50% 50% 0 0;
+        }
 
-        /* ================== FINAL REVEAL ================== */
-#cloth { 
-    position: absolute; 
-    top: 0;
-    left: 0; 
-    width: 100%; 
-    height: 100%; 
-    background: linear-gradient(to bottom, #800, #400); 
-    z-index: 200; 
+        /* ── CANDLES ───────────────────────────────────────────────────
+           Three thin candles sitting on the cake. Each is clickable. */
+        .candle {
+            width: 10px; height: 45px;
+            background: linear-gradient(to bottom, #d4af37, #f1c40f);
+            position: relative; display: inline-block;
+            margin: 0 12px; cursor: pointer; top: -55px; border-radius: 2px;
+        }
+        /* The flame — glowing oval on each candle, always flickering */
+        .flame {
+            position: absolute; top: -18px; left: 50%;
+            transform: translateX(-50%); width: 14px; height: 22px;
+            background: radial-gradient(#fff, #ffae00);
+            border-radius: 50%; animation: flicker 0.15s infinite;
+        }
+        /* flicker wobbles the flame subtly left and right, like a real fire */
+        @keyframes flicker {
+            0%   { transform: translateX(-50%) scale(1);    }
+            50%  { transform: translateX(-52%) scale(1.1);  }
+            100% { transform: translateX(-48%) scale(1);    }
+        }
+        /* When .extinguished is added, the flame element is hidden */
+        .extinguished .flame { display: none; }
 
-    display: flex; 
-    flex-direction: column; 
-    align-items: center; 
-    justify-content: center; 
-    color: var(--gold); 
+        /* ── EAT PROMPT ─────────────────────────────────────────────────
+           "Eat my darling" clickable text — shown after candles blown out.
+           Hidden at start, displayed by JS after extinguish() runs. */
+        #eat-prompt {
+            display: none; margin-top: 30px;
+            font-weight: bold; color: #700; cursor: pointer; font-size: 1.2rem;
+        }
 
-    transform: translateY(-120%);   /* 🔥 push it completely out */
-    transition: transform 2.5s ease;
+        /* ── FINAL REVEAL SCREEN ───────────────────────────────────────
+           The deep red celebration screen that slides down from above.
+           - transform:translateY(-120%) : starts hidden ABOVE the card
+           - visibility:hidden          : completely invisible (not just transparent)
+           - pointer-events:none        : cannot accidentally block clicks below it
+           - transition:transform 2.5s  : smooth slide downward animation */
+        #cloth {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, #800, #400); z-index: 200;
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: center; color: var(--gold);
+            transform: translateY(-120%);
+            transition: transform 2.5s ease;
+            pointer-events: none;
+            visibility: hidden;
+            overflow: hidden; /* keeps confetti inside the screen */
+        }
+        /* When JS adds "roll-down" class — screen slides into view */
+        #cloth.roll-down {
+            transform: translateY(0);
+            pointer-events: auto;
+            visibility: visible;
+        }
 
-    pointer-events: none;           /* 🔥 prevents blocking clicks */
-    visibility: hidden;             /* 🔥 completely hides it */
-}
-        #cloth.roll-down { 
-    transform: translateY(0); 
-    pointer-events: auto;
-    visibility: visible;
-}
-   /* ================== SIZE OF DUDU ================== */
+        /* ── VIDEO LAYOUT ──────────────────────────────────────────────
+           Two videos displayed side-by-side inside the finale screen. */
+        .video-row {
+            display: flex; justify-content: center; gap: 10px;
+            width: 100%; margin-top: 20px;
+        }
+        .video-row video {
+            width: 45%; max-width: 180px;
+            border-radius: 8px; background: black;
+        }
+        /* Shrink videos slightly on very small screens */
+        @media (max-width: 480px) { .video-row video { width: 42%; } }
+
+        /* ── DANCING GIF ROW ───────────────────────────────────────────
+           Two dancing character GIFs side by side with a gap between them. */
+        .gif-row {
+            display: flex; justify-content: center; align-items: center;
+            gap: 20px; margin-top: 20px;
+        }
+
+        /* ── BUBU GIF 1 ────────────────────────────────────────────────
+           First dancing character. Starts invisible (opacity:0).
+           Slides left and right continuously once made visible by JS.
+           JS fades it in 3 seconds after finale starts. */
         #bubu-gif {
-    width: 60px;          /* reduce size (adjust 60–90 as you like) */
-    margin-top: 20px;
+            width: 60px; margin-top: 20px; opacity: 0;
+            animation: moveSide 2s infinite ease-in-out;
+        }
 
-    opacity: 0;           /* initially hidden */
-animation: moveSide 2s infinite ease-in-out;}
+        /* ── BUBU GIF 2 ────────────────────────────────────────────────
+           Second dancing character. Moves in opposite direction to first.
+           Also starts invisible, fades in at same time as first gif. */
         #bubu-gif-2 {
-    width: 50px;
-    margin-top: 20px;
+            width: 50px; margin-top: 20px; opacity: 0;
+            animation: moveSideReverse 2s infinite ease-in-out;
+        }
 
-    opacity: 0;
-
-    animation: moveSideReverse 2s infinite ease-in-out;
-}
- /* ================== MOVEMENT OF DUDU ================== */ 
+        /* GIF 1 slides left → right → left */
         @keyframes moveSide {
-    0% { transform: translateX(-20px); }
-    50% { transform: translateX(20px); }
-    100% { transform: translateX(-20px); }
-}
+            0%   { transform: translateX(-20px); }
+            50%  { transform: translateX(20px);  }
+            100% { transform: translateX(-20px); }
+        }
+        /* GIF 2 slides right → left → right (opposite direction) */
         @keyframes moveSideReverse {
-    0% { transform: translateX(20px); }
-    50% { transform: translateX(-20px); }
-    100% { transform: translateX(20px); }
-}
-  /* ================== CONFETTI ================== */
-.confetti {
-    position: absolute;
-    width: 8px;
-    height: 12px;
-    background: red;
-    top: -20px;
-    opacity: 0.9;
-    animation: fall 3s linear forwards;
-}
+            0%   { transform: translateX(20px);  }
+            50%  { transform: translateX(-20px); }
+            100% { transform: translateX(20px);  }
+        }
 
-@keyframes fall {
-    0% {
-        transform: translateY(0) rotate(0deg);
-    }
-    100% {
-        transform: translateY(600px) rotate(720deg);
-        opacity: 0;
-    }
-}      
-        /* ================== RIBBON ================== */
-        #ribbon-container { position: absolute; width: 100%; height: 100%; z-index: 300; display: flex; justify-content: center; align-items: center; }
+        /* ── CONFETTI ──────────────────────────────────────────────────
+           Each confetti piece is a small coloured rectangle created by JS.
+           animation:fall makes it drop and spin downward in 3 seconds. */
+        .confetti {
+            position: absolute; width: 8px; height: 12px;
+            background: red; top: -20px; opacity: 0.9;
+            animation: fall 3s linear forwards;
+        }
+        /* fall drops the piece to bottom of screen while spinning it */
+        @keyframes fall {
+            0%   { transform: translateY(0) rotate(0deg);       }
+            100% { transform: translateY(600px) rotate(720deg); opacity: 0; }
+        }
+
+        /* ── RIBBON ────────────────────────────────────────────────────
+           Gold ribbon strips covering the whole card at the highest layer.
+           - z-index:300 : sits above everything including the doors
+           When .untied class added by JS, ribbons slide off screen. */
+        #ribbon-container {
+            position: absolute; width: 100%; height: 100%; z-index: 300;
+            display: flex; justify-content: center; align-items: center;
+        }
+        /* Each ribbon strip covers 50% width of the card */
         .ribbon-half { position: absolute; width: 50%; height: 40px; background: var(--gold); transition: 1s; }
-        .ribbon-left { left: 0; } .ribbon-right { right: 0; }
-        .knot { width: 60px; height: 60px; background: var(--gold); border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; }
-        .untied .ribbon-left { transform: translateX(-100%); }
-        .untied .ribbon-right { transform: translateX(100%); }
+        .ribbon-left  { left: 0;  }
+        .ribbon-right { right: 0; }
+        /* The circular gold OPEN button in the ribbon centre */
+        .knot {
+            width: 60px; height: 60px; background: var(--gold);
+            border-radius: 50%; display: flex; justify-content: center;
+            align-items: center; cursor: pointer; font-weight: bold;
+            color: var(--velvet);
+        }
+        /* untied: left ribbon slides left off-screen, right slides right off-screen */
+        .untied .ribbon-left  { transform: translateX(-100%); }
+        .untied .ribbon-right { transform: translateX(100%);  }
+        /* knot shrinks and disappears */
         .untied .knot { transform: scale(0); opacity: 0; }
-        /* ================== VIDEO LAYOUT ================== */
-.video-row {
-    display: flex;              /* makes videos sit side-by-side */
-    justify-content: center;    /* centers them horizontally */
-    gap: 10px;                  /* space between videos */
-    width: 100%;
-    margin-top: 20px;
-}
 
-.video-row video {
-    width: 45%;                 /* each video takes ~half width */
-    max-width: 180px;           /* prevents them from becoming too large */
-    border-radius: 8px;
-    background: black;
-}
-        @media (max-width: 480px) {
-    .video-row video {
-        width: 42%;
-    }
-}
-  /* following is to add space between GIFs */      
-                .gif-row {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 20px;   /* space between GIFs */
-    margin-top: 20px;
-}
-        /* ================== HEARTBEAT TEXT ================== */
-.heartbeat-text {
-    color: white;
-    animation: heartbeat 1.5s infinite ease-in-out;
-}
+        /* ── HEARTBEAT TEXT ────────────────────────────────────────────
+           Applied to the main name in the finale screen.
+           Gently pulses in size and opacity — like a heartbeat. */
+        .heartbeat-text {
+            color: white;
+            animation: heartbeat 1.5s infinite ease-in-out;
+        }
+        @keyframes heartbeat {
+            0%   { transform: scale(1);   opacity: 1;    }
+            25%  { transform: scale(1.1); opacity: 0.85; }
+            50%  { transform: scale(1);   opacity: 1;    }
+            75%  { transform: scale(1.1); opacity: 0.85; }
+            100% { transform: scale(1);   opacity: 1;    }
+        }
 
-/* ================== HEARTBEAT ANIMATION ================== */
-@keyframes heartbeat {
-    0%   { transform: scale(1); opacity: 1; }
-    25%  { transform: scale(1.1); opacity: 0.85; }
-    50%  { transform: scale(1); opacity: 1; }
-    75%  { transform: scale(1.1); opacity: 0.85; }
-    100% { transform: scale(1); opacity: 1; }
-}
+        /* ── REPLAY BUTTON ─────────────────────────────────────────────
+           Starts invisible (opacity:0). JS fades it in after 60 seconds.
+           Clicking it reloads the page to replay the whole experience. */
+        #replay-btn {
+            margin-top: 15px; padding: 10px 22px;
+            background: var(--gold); color: var(--velvet);
+            border: none; border-radius: 20px;
+            font-weight: bold; cursor: pointer;
+            opacity: 0; transition: opacity 1.5s ease;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           ██  AUKSHAN CEREMONY STYLES
+           The virtual Indian blessing ritual that appears inside #stage
+           after the card opens. User clicks through 5 ritual items.
+           After all 5 are complete, the cake and candles are revealed.
+           ═══════════════════════════════════════════════════════════════ */
+
+        /* ── AUKSHAN CONTAINER ─────────────────────────────────────────
+           A warm parchment-coloured square area that holds all ritual items.
+           Sits inside #stage. Hidden at start — JS shows it after doors open.
+           - display:none : invisible until openCard() calls it */
+        #aukshan-container {
+            display: none;
+            position: relative;
+            width: 280px; height: 280px;
+            background: rgba(253, 246, 227, 0.95); /* warm cream/parchment colour */
+            border: 2px solid var(--gold);
+            border-radius: 12px;
+            margin: 10px auto;
+        }
+
+        /* ── RITUAL ITEMS ──────────────────────────────────────────────
+           Each .item is a ritual object (kumkum, rice, etc.).
+           - position:absolute    : all items stacked at the center initially
+           - display:none         : each item only appears when its step is reached
+           - cursor:pointer       : hand cursor invites the user to click it
+           The JS function promptNext() shows one item at a time. */
+        .item {
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 80px; height: 80px;
+            cursor: pointer;
+            transform: translate(-50%, -50%); /* centers it on the container */
+            display: none; /* JS shows each item only when it's that item's turn */
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        /* ── AUKSHAN INSTRUCTION TEXT ──────────────────────────────────
+           Text below the ritual area telling the user what to click and do.
+           Updated by JS at each step via innerText. */
+        #aukshan-instruction {
+            margin-top: 8px;
+            font-weight: bold; color: #b22222; /* deep red — traditional colour */
+            font-size: 0.78rem; text-align: center;
+            width: 280px;
+            min-height: 36px; /* reserves space so layout doesn't jump */
+        }
+
+        /* ── BLINKING HAND CURSOR ──────────────────────────────────────
+           A small hand pointer image that appears inside the aukshan area.
+           It moves toward each ritual item to guide the user where to click.
+           - pointer-events:none : cannot be clicked accidentally
+           - animation:blink     : fades in and out to attract attention */
+        #cursor {
+            position: absolute;
+            width: 30px; height: 30px;
+            background: url("https://upload.wikimedia.org/wikipedia/commons/2/2c/Hand_cursor_icon.png")
+                        no-repeat center / contain;
+            display: none;
+            pointer-events: none;
+            animation: blink 1s infinite;
+            z-index: 50;
+        }
+        /* blink fades the cursor pointer in and out like a beacon */
+        @keyframes blink {
+            0%   { opacity: 1; }
+            50%  { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        /* ── ITEM CLICK ANIMATION ──────────────────────────────────────
+           When user clicks a ritual item, it briefly shrinks (scale 0.7)
+           then bounces back to full size — tactile visual feedback. */
+        @keyframes clickEffect {
+            0%   { transform: translate(-50%,-50%) scale(1);   }
+            50%  { transform: translate(-50%,-50%) scale(0.7); }
+            100% { transform: translate(-50%,-50%) scale(1);   }
+        }
+
+        /* ── ORBIT ANIMATIONS FOR RITUAL ITEMS ────────────────────────
+           Some items (betel nut, tray) orbit around the center of the
+           aukshan container — mimicking the circular ritual motion.
+           translateX(100px) = orbit radius (how far from center it goes)
+           rotate(360deg) = full circle. Opposite rotation keeps item upright. */
+        @keyframes orbitRight {
+            0%   { transform: rotate(0deg)    translateX(100px) rotate(0deg);    }
+            100% { transform: rotate(360deg)  translateX(100px) rotate(-360deg); }
+        }
+        @keyframes orbitLeft {
+            0%   { transform: rotate(0deg)    translateX(100px) rotate(0deg);    }
+            100% { transform: rotate(-360deg) translateX(100px) rotate(360deg);  }
+        }
+
+        /* ── AUKSHAN TITLE ─────────────────────────────────────────────
+           The small heading "🙏 Virtual Aukshan" shown above the ritual area. */
+        #aukshan-title {
+            font-size: 0.9rem; font-weight: bold;
+            color: var(--velvet); margin-bottom: 6px;
+        }
+
     </style>
 </head>
 
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     ██  BODY — everything the user sees and interacts with
+     NESTING MAP (boxes inside boxes):
+     #card-frame               (rainbow glowing border)
+      └── #card                (the greeting card)
+           ├── #ribbon-container   (gold ribbon + OPEN knot)
+           ├── .door.left          (left swinging door)
+           ├── .door.right         (right swinging door)
+           └── #stage              (inner cream scene)
+                ├── #aukshan-container  (NEW: blessing ritual)
+                │    ├── ritual items   (kumkum, rice, etc.)
+                │    └── #cursor        (animated hand pointer)
+                ├── #aukshan-instruction (step-by-step text)
+                ├── #side-prompt        (candle instruction)
+                ├── .cake               (birthday cake)
+                │    └── candles ×3     (clickable flames)
+                └── #eat-prompt         ("eat my darling")
+           └── #cloth              (red finale screen)
+                ├── headings
+                ├── .video-row
+                ├── .gif-row
+                └── #replay-btn
+
+     FULL EXPERIENCE FLOW:
+     1. Ribbon click  → ribbon slides away → doors swing open
+     2. Aukshan       → 5 ritual items appear one by one to click
+     3. Aukshan done  → cake + candles + prompt appear
+     4. Candle click  → flames out → music plays → eat prompt appears
+     5. Eat click     → red finale screen slides down → videos + confetti
+     6. 3 sec later   → GIFs appear
+     7. 60 sec later  → Replay button fades in
+     ═══════════════════════════════════════════════════════════════════ -->
 <body>
-<!-- ================== MAIN INTERACTIVE CARD ================== -->
 
+<!-- ── RAINBOW FRAME: outer glowing border around the card ── -->
 <div id="card-frame">
-    <!-- ===== OUTER BORDER ===== -->
 
+    <!-- ── CARD: the main card container ── -->
     <div id="card">
-        <!-- ===== CARD WRAPPER ===== -->
 
-        <!-- ===== ENTRY RIBBON ===== -->
+        <!-- ── RIBBON: covers whole card at z-index 300 (highest)
+             Clicking anywhere on it calls untieRibbon() ── -->
         <div id="ribbon-container" onclick="untieRibbon()">
-            <div class="ribbon-half ribbon-left"></div>
-            <div class="knot">OPEN</div>
-            <div class="ribbon-half ribbon-right"></div>
+            <div class="ribbon-half ribbon-left"></div>   <!-- left gold strip  -->
+            <div class="knot">OPEN</div>                  <!-- gold circle knot -->
+            <div class="ribbon-half ribbon-right"></div>  <!-- right gold strip -->
         </div>
 
-        <!-- ===== DOORS ===== -->
+        <!-- ── LEFT DOOR: swings to the left when "open" class added ── -->
         <div class="door left">FOR</div>
+
+        <!-- ── RIGHT DOOR: swings to the right when "open" class added ── -->
         <div class="door right">YOU</div>
 
-        <!-- ===== MAIN STAGE ===== -->
+        <!-- ── STAGE: inner cream area, contains all interactive content ── -->
         <div id="stage">
 
-            <!-- ===== PROMPT ===== -->
+            <!-- ══════════════════════════════════════════════════
+                 AUKSHAN CEREMONY — the virtual blessing ritual
+                 Appears immediately after doors open.
+                 User clicks through 5 traditional ritual items.
+                 After the last item, cake and candles are revealed.
+                 ══════════════════════════════════════════════════ -->
+
+            <!-- Title shown above the aukshan area -->
+            <div id="aukshan-title">🙏 Virtual Aukshan Ceremony 🙏</div>
+
+            <!-- Container holding all 5 ritual items + hand cursor.
+                 Each item starts display:none — JS shows them one at a time. -->
+            <div id="aukshan-container">
+
+                <!-- ITEM 1: Kumkum (red powder for tilak/forehead mark)
+                     No orbit — item stays still, user clicks to apply tilak -->
+                <img src="https://upload.wikimedia.org/wikipedia/commons/b/b4/Kumkum_Powder.jpg"
+                     id="kumkum" class="item" alt="Kumkum">
+
+                <!-- ITEM 2: Rice grains (Akshata — blessed rice sprinkled for blessings)
+                     No orbit — user clicks to sprinkle -->
+                <img src="https://upload.wikimedia.org/wikipedia/commons/3/3f/Rice_grains1.jpg"
+                     id="rice" class="item" alt="Rice">
+
+                <!-- ITEM 3: Betel Nut (traditional offering)
+                     Has orbitRight animation — rotates clockwise around center -->
+                <img src="https://upload.wikimedia.org/wikipedia/commons/a/aa/Betel_nut.jpg"
+                     id="betelnut" class="item" alt="Betel Nut">
+
+                <!-- ITEM 4: Gold Ring (blessing with a ring)
+                     Has orbitLeft animation — rotates counter-clockwise -->
+                <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Gold_ring.jpg"
+                     id="ring" class="item" alt="Ring">
+
+                <!-- ITEM 5: Tray with Lamp (the aarti tray — final blessing)
+                     Has orbitRight animation — circles around like real aarti -->
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Brass_thali_with_lamp.jpg"
+                     id="tray" class="item" alt="Tray with Lamp">
+
+                <!-- Blinking hand cursor that moves toward each item
+                     to guide the user. Controlled entirely by JS. -->
+                <div id="cursor"></div>
+
+            </div>
+            <!-- end of aukshan-container -->
+
+            <!-- Instruction text updated at each step to tell user what to do.
+                 e.g. "Click Kumkum to apply Tilak", "Aukshan completed!" etc. -->
+            <div id="aukshan-instruction"></div>
+
+            <!-- ══════════════════════════════════════════════════
+                 CANDLE BLOW PROMPT
+                 Hidden until aukshan finishes. JS sets display:block
+                 and fades it in after aukshan completion.
+                 ══════════════════════════════════════════════════ -->
             <div id="side-prompt">"Make a wish and blow off the candles"</div>
 
-            <!-- ===== CAKE ===== -->
+            <!-- ══════════════════════════════════════════════════
+                 BIRTHDAY CAKE
+                 Hidden (display:none) until aukshan completes.
+                 JS shows it after final aukshan step is done.
+                 ══════════════════════════════════════════════════ -->
             <div class="cake" id="cakeNode">
+
+                <!-- White icing on top of the cake -->
                 <div class="frosting"></div>
 
-                <!-- ===== CANDLES ===== -->
+                <!-- Three candles. Each calls extinguish() when clicked.
+                     All three flames go out at once when any candle is tapped. -->
                 <div id="candle-container">
                     <div class="candle" onclick="extinguish()"><div class="flame"></div></div>
                     <div class="candle" onclick="extinguish()"><div class="flame"></div></div>
                     <div class="candle" onclick="extinguish()"><div class="flame"></div></div>
                 </div>
+
+            </div>
+            <!-- end of .cake -->
+
+            <!-- "Eat my darling" text — appears 2 seconds after candles blown.
+                 Clicking it triggers the grand finale screen. -->
+            <div id="eat-prompt" onclick="revealFinale()">eat my darling</div>
+
+        </div>
+        <!-- end of #stage -->
+
+        <!-- ══════════════════════════════════════════════════════
+             FINALE SCREEN — deep red birthday celebration
+             Starts hidden above the card (translateY -120%).
+             Slides down when JS adds "roll-down" class.
+             ══════════════════════════════════════════════════════ -->
+        <div id="cloth">
+
+            <!-- Birthday greeting text -->
+            <h2>HAPPY BIRTHDAY</h2>
+
+            <!-- Name with heartbeat animation (pulses gently forever) -->
+            <h1 class="heartbeat-text">DEAR XXX</h1>
+
+            <!-- Loving message below the name -->
+            <p>My LOVE &amp; My Darling</p>
+
+            <!-- Two looping videos side by side
+                 .loop : video loops endlessly
+                 .playsinline : plays inline on iOS (not fullscreen) -->
+            <div class="video-row">
+                <video id="v1" src="gg2.mp4" loop playsinline></video>
+                <video id="v2" src="gg3.mp4" loop playsinline></video>
             </div>
 
-            <!-- ===== NEXT ACTION ===== -->
-            <div id="eat-prompt" onclick="revealFinale()">eat my darling</div>
+            <!-- Two dancing GIFs side by side.
+                 Both start invisible (opacity:0).
+                 JS fades them in 3 seconds after finale starts.
+                 gif-1 moves left→right, gif-2 moves right→left (CSS animations). -->
+            <div class="gif-row">
+                <img id="bubu-gif"   src="dudu_dance.gif"    alt="Dancing Dudu">
+                <img id="bubu-gif-2" src="dancing_bubu1.gif" alt="Dancing">
+            </div>
+
+            <!-- Replay button — invisible at start.
+                 JS fades it in after 60 seconds.
+                 onclick reloads the entire page to replay the card. -->
+            <button id="replay-btn" onclick="location.reload()">Replay Card</button>
+
         </div>
+        <!-- end of #cloth -->
 
-        <!-- ===== FINAL CELEBRATION ===== -->
-
-<div id="cloth">
-    <h2>HAPPY BIRTHDAY</h2>
-    <h1 class="heartbeat-text">DEAR XXX</h1>
-    <p>My LOVE & My Darling</p>
-
-    <!-- ===== VIDEOS ROW ===== -->
-    <div class="video-row">
-        <video id="v1" src="gg2.mp4" loop playsinline></video>
-        <video id="v2" src="gg3.mp4" loop playsinline></video>
     </div>
+    <!-- end of #card -->
 
-    <!-- ===== DANCING GIF ===== -->
-<div class="gif-row">
-    <img id="bubu-gif" src="dudu_dance.gif">
-     <img id="bubu-gif-2" src="dancing_bubu1.gif" alt="Dancing">
 </div>
+<!-- end of #card-frame -->
 
-     
-
-    <!-- ===== REPLAY ===== -->
-    <button id="replay-btn" onclick="location.reload()">Replay Card</button>
-</div>
-    </div>
-</div>
-
+<!-- Hidden audio element — birthday song.
+     Plays when candles are blown out via extinguish().
+     .catch(() => {}) silently handles browser autoplay restrictions. -->
 <audio id="bdaySong" src="birthday.mp3"></audio>
 
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     ██  SCRIPT — all actions and interactions
+     JavaScript makes things happen when the user interacts.
+     Each function is a "recipe" that runs when called.
+
+     FULL SEQUENCE:
+     1. untieRibbon()   → ribbon slides away → openCard()
+     2. openCard()      → doors open → aukshan ceremony begins
+     3. promptNext()    → shows ritual item one at a time
+     4. performStep()   → animates item when clicked → next step
+     5. (after step 5)  → aukshan complete → cake + candles revealed
+     6. extinguish()    → candles blown → music → eat prompt shown
+     7. revealFinale()  → red screen slides down → videos → confetti → GIFs
+     8. (after 60s)     → Replay button fades in
+     ═══════════════════════════════════════════════════════════════════ -->
 <script>
-/* ================== EXPERIENCE FLOW ==================
-1. Ribbon click → untieRibbon()
-2. Doors open → openCard()
-3. Candles click → extinguish()
-4. Finale → revealFinale()
-====================================================== */
 
-let musicStarted = false;
+    /* ── LOCK FLAG ──────────────────────────────────────────────────────
+       Prevents extinguish() from running more than once if user
+       taps multiple candles rapidly. Once true, function exits early. */
+    let musicStarted = false;
 
-// Ribbon interaction
-function untieRibbon() {
-    document.getElementById('ribbon-container').classList.add('untied');
-    setTimeout(() => {
-        document.getElementById('ribbon-container').style.display = 'none';
-        openCard();
-    }, 800);
-}
+    /* ── AUKSHAN STEP TRACKER ───────────────────────────────────────────
+       currentStep tracks which ritual item we're on (0 through 4).
+       The steps array defines all 5 ritual items with:
+         id     : the HTML element ID of the image
+         prompt : instruction text shown to the user at that step
+         motion : CSS animation name — "none", "orbitRight", or "orbitLeft"
+         sound  : (reserved for future audio per step) */
+    let currentStep = 0;
+    const steps = [
+        { id: "kumkum",   prompt: "🔴 Click Kumkum to apply the Tilak",             motion: "none",       },
+        { id: "rice",     prompt: "🌾 Click Rice to sprinkle Akshata (blessings)",   motion: "none",       },
+        { id: "betelnut", prompt: "🟤 Click Betel Nut to offer (rotates right→left)",motion: "orbitRight", },
+        { id: "ring",     prompt: "💍 Click Ring to bless (rotates left→right)",      motion: "orbitLeft",  },
+        { id: "tray",     prompt: "🪔 Click the Tray to do Aarti (circles around)", motion: "orbitRight", },
+    ];
 
-// Opens card
-function openCard() {
-    document.getElementById('card').classList.add('open');
-}
 
-// Candle interaction
-function extinguish() {
-    if (musicStarted) return;
-    musicStarted = true;
-
-    document.querySelectorAll('.candle').forEach(c => c.classList.add('extinguished'));
-    document.getElementById('bdaySong').play().catch(() => {});
-
-    setTimeout(() => {
-        document.getElementById('eat-prompt').style.display = 'block';
-    }, 2000);
-}
-
-// Final reveal
-function revealFinale() {
-    // Show cloth
-    document.getElementById('cloth').classList.add('roll-down');
-createConfetti();
-    // Play videos
-    document.getElementById('v1').play();
-    document.getElementById('v2').play();
-
-    // 🔥 Show GIF after 3 seconds
-    setTimeout(() => {
-        document.getElementById('bubu-gif').style.opacity = "1";
-        document.getElementById('bubu-gif-2').style.opacity = "1";
-    }, 3000);
-
-    // 🔥 Show Replay button after 60 seconds
-    setTimeout(() => {
-        document.getElementById('replay-btn').style.opacity = "1";
-    }, 60000);
-}
-    function createConfetti() {
-    const colors = ["#FFD700", "#FF4D4D", "#4DFF88", "#4DB8FF", "#FF66FF"];
-    const container = document.getElementById('cloth');
-
-    for (let i = 0; i < 40; i++) {
-        const confetti = document.createElement("div");
-        confetti.classList.add("confetti");
-
-        // random position
-        confetti.style.left = Math.random() * 100 + "%";
-
-        // random color
-        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-
-        // random delay
-        confetti.style.animationDelay = Math.random() * 1 + "s";
-
-        container.appendChild(confetti);
-
-        // remove after animation
+    /* ══════════════════════════════════════════════════════════════════
+       STEP 1: untieRibbon()
+       TRIGGERED BY: user clicking the ribbon / OPEN knot
+       WHAT IT DOES:
+         - Adds "untied" class → CSS slides both ribbon strips off-screen
+           and shrinks the knot to zero (see .untied rules in CSS)
+         - Waits 800ms for animation to finish
+         - Hides the ribbon container entirely (display:none)
+         - Calls openCard() to begin the card experience
+    ══════════════════════════════════════════════════════════════════ */
+    function untieRibbon() {
+        document.getElementById('ribbon-container').classList.add('untied');
         setTimeout(() => {
-            confetti.remove();
-        }, 3000);
+            document.getElementById('ribbon-container').style.display = 'none';
+            openCard(); /* move to next step */
+        }, 800); /* 800ms = time for ribbon slide animation to finish */
     }
-}
+
+
+    /* ══════════════════════════════════════════════════════════════════
+       STEP 2: openCard()
+       TRIGGERED BY: untieRibbon() calling it automatically
+       WHAT IT DOES:
+         - Adds "open" class to #card → CSS rotates both doors open in 3D
+         - Shows the aukshan title and container
+         - Calls promptNext() to begin the first ritual step
+       NOTE: Cake and candles stay hidden here — they only appear
+             AFTER all 5 aukshan steps are completed.
+    ══════════════════════════════════════════════════════════════════ */
+    function openCard() {
+        /* Swing both doors open via CSS */
+        document.getElementById('card').classList.add('open');
+
+        /* Show the aukshan title and ritual container */
+        document.getElementById('aukshan-title').style.display     = 'block';
+        document.getElementById('aukshan-container').style.display = 'block';
+
+        /* Begin the first ritual step after a short pause for doors to open */
+        setTimeout(() => promptNext(), 600);
+    }
+
+
+    /* ══════════════════════════════════════════════════════════════════
+       STEP 3: promptNext()
+       TRIGGERED BY: openCard() and at the end of each performStep()
+       WHAT IT DOES:
+         - If there are still ritual steps remaining:
+             • Shows the current ritual item image
+             • Updates the instruction text
+             • Moves the blinking hand cursor toward the item
+         - If all 5 steps are done:
+             • Shows "Aukshan completed!" message
+             • Hides the cursor and aukshan container
+             • Reveals the birthday cake, candles, and side-prompt
+    ══════════════════════════════════════════════════════════════════ */
+    function promptNext() {
+
+        if (currentStep < steps.length) {
+
+            /* There are still steps remaining — show the current item */
+            const step = steps[currentStep];
+            const item = document.getElementById(step.id);
+            item.style.display = 'block'; /* make the ritual item visible */
+
+            /* Update the instruction text below the aukshan container */
+            document.getElementById('aukshan-instruction').innerText = step.prompt;
+
+            /* Move the blinking hand cursor to point at the item */
+            moveCursorToItem(item);
+
+        } else {
+
+            /* All 5 steps done — aukshan is complete! */
+            document.getElementById('aukshan-instruction').innerText = '🙏 Aukshan completed! Blessings given 🙏';
+            document.getElementById('cursor').style.display = 'none';
+
+            /* Hide the aukshan area and title after a short pause */
+            setTimeout(() => {
+                document.getElementById('aukshan-container').style.display = 'none';
+                document.getElementById('aukshan-title').style.display     = 'none';
+                document.getElementById('aukshan-instruction').style.display = 'none';
+
+                /* Reveal the birthday cake and candles */
+                const cake = document.getElementById('cakeNode');
+                cake.style.display = 'block'; /* cake appears */
+
+                /* Fade in the "make a wish" instruction prompt */
+                const prompt = document.getElementById('side-prompt');
+                prompt.style.display  = 'block';
+                prompt.style.opacity  = '1';
+
+            }, 1500); /* 1.5 second pause to let user read the completion message */
+        }
+    }
+
+
+    /* ══════════════════════════════════════════════════════════════════
+       HELPER: moveCursorToItem(item)
+       TRIGGERED BY: promptNext() at each step
+       WHAT IT DOES:
+         Moves the blinking hand cursor element to sit just beside
+         the current ritual item, so the user knows where to click.
+         Uses getBoundingClientRect() to get the item's actual screen position.
+    ══════════════════════════════════════════════════════════════════ */
+    function moveCursorToItem(item) {
+        const cursor    = document.getElementById('cursor');
+        const container = document.getElementById('aukshan-container');
+
+        /* Get the pixel positions of the item and the container on screen */
+        const itemRect      = item.getBoundingClientRect();
+        const containerRect = container.getBoundingClientRect();
+
+        /* Show and smoothly move the cursor to just right of the item */
+        cursor.style.display    = 'block';
+        cursor.style.transition = 'all 0.8s ease';
+        cursor.style.left = (itemRect.left - containerRect.left + itemRect.width + 5) + 'px';
+        cursor.style.top  = (itemRect.top  - containerRect.top)  + 'px';
+    }
+
+
+    /* ══════════════════════════════════════════════════════════════════
+       STEP 4: performStep(step)
+       TRIGGERED BY: user clicking any ritual item
+       WHAT IT DOES:
+         - Hides the cursor while animation plays
+         - If item has an orbit motion: plays the orbit animation for 3s,
+           then hides the item and moves to next step
+         - If item has no motion (kumkum, rice): waits 1.5s,
+           hides the item, and moves to next step
+         After each step: currentStep++ and promptNext() is called.
+    ══════════════════════════════════════════════════════════════════ */
+    function performStep(step) {
+        const item   = document.getElementById(step.id);
+        const cursor = document.getElementById('cursor');
+
+        cursor.style.display = 'none'; /* hide cursor during animation */
+
+        if (step.motion !== 'none') {
+            /* Item has an orbit animation — apply it and wait 3 seconds */
+            item.style.animation = step.motion + ' 3s linear';
+            setTimeout(() => {
+                item.style.animation = ''; /* clear the animation */
+                item.style.display   = 'none'; /* hide item */
+                currentStep++;  /* advance to next step */
+                promptNext();   /* show next ritual item */
+            }, 3000); /* 3000ms = 3 seconds orbit duration */
+        } else {
+            /* No orbit — just click-and-wait for a moment */
+            item.style.animation = 'clickEffect 0.4s ease';
+            setTimeout(() => {
+                item.style.display   = 'none'; /* hide item */
+                currentStep++;  /* advance to next step */
+                promptNext();   /* show next ritual item */
+            }, 1500); /* 1500ms = 1.5 second pause before moving on */
+        }
+    }
+
+    /* Attach click handlers to each ritual item.
+       When clicked, each item runs performStep() with its own step data. */
+    steps.forEach(step => {
+        document.getElementById(step.id).addEventListener('click', () => performStep(step));
+    });
+
+
+    /* ══════════════════════════════════════════════════════════════════
+       STEP 5: extinguish()
+       TRIGGERED BY: user clicking any candle
+       WHAT IT DOES:
+         - Lock flag check: does nothing if already triggered (prevents double fire)
+         - Adds "extinguished" class to ALL candles → CSS hides all flames
+         - Hides the side-prompt (no longer needed)
+         - Plays the birthday song
+         - After 2 seconds: shows the "eat my darling" prompt
+    ══════════════════════════════════════════════════════════════════ */
+    function extinguish() {
+        if (musicStarted) return; /* prevent double trigger */
+        musicStarted = true;
+
+        /* Blow out all 3 candles simultaneously */
+        document.querySelectorAll('.candle').forEach(c => c.classList.add('extinguished'));
+
+        /* Hide the candle instruction */
+        document.getElementById('side-prompt').style.opacity = '0';
+
+        /* Start the birthday song */
+        document.getElementById('bdaySong').play().catch(() => {});
+
+        /* After 2 seconds, reveal the "eat" prompt */
+        setTimeout(() => {
+            document.getElementById('eat-prompt').style.display = 'block';
+        }, 2000);
+    }
+
+
+    /* ══════════════════════════════════════════════════════════════════
+       STEP 6: revealFinale()
+       TRIGGERED BY: user clicking "eat my darling"
+       WHAT IT DOES:
+         - Adds "roll-down" class to #cloth → red screen slides down from above
+         - Plays both looping videos
+         - Creates the confetti burst
+         - After 3 seconds: GIFs fade in
+         - After 60 seconds: Replay button fades in
+    ══════════════════════════════════════════════════════════════════ */
+    function revealFinale() {
+        /* Slide the red birthday screen down */
+        document.getElementById('cloth').classList.add('roll-down');
+
+        /* Launch confetti immediately */
+        createConfetti();
+
+        /* Play both videos */
+        document.getElementById('v1').play();
+        document.getElementById('v2').play();
+
+        /* After 3 seconds, fade in both dancing GIFs */
+        setTimeout(() => {
+            document.getElementById('bubu-gif').style.opacity   = '1';
+            document.getElementById('bubu-gif-2').style.opacity = '1';
+        }, 3000);
+
+        /* After 60 seconds, fade in the Replay button */
+        setTimeout(() => {
+            document.getElementById('replay-btn').style.opacity = '1';
+        }, 60000);
+    }
+
+
+    /* ══════════════════════════════════════════════════════════════════
+       HELPER: createConfetti()
+       TRIGGERED BY: revealFinale()
+       WHAT IT DOES:
+         Creates 40 colourful confetti pieces inside the red #cloth screen.
+         Each piece gets random colour, position, and animation delay
+         so they fall at different times — not all at once.
+         Each piece is removed from the page after 3 seconds (cleanup).
+    ══════════════════════════════════════════════════════════════════ */
+    function createConfetti() {
+        const colors    = ["#FFD700", "#FF4D4D", "#4DFF88", "#4DB8FF", "#FF66FF"];
+        const container = document.getElementById('cloth'); /* falls inside red screen */
+
+        for (let i = 0; i < 40; i++) {
+            const confetti = document.createElement("div");
+            confetti.classList.add("confetti"); /* CSS handles the fall animation */
+
+            /* Random horizontal starting position across the screen */
+            confetti.style.left = Math.random() * 100 + "%";
+
+            /* Random colour from the palette */
+            confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+
+            /* Random delay: pieces fall at staggered times, not all at once */
+            confetti.style.animationDelay = Math.random() * 1 + "s";
+
+            container.appendChild(confetti); /* add to the red finale screen */
+
+            /* Remove this confetti piece after its animation completes */
+            setTimeout(() => confetti.remove(), 3000);
+        }
+    }
+
 </script>
 
 </body>
