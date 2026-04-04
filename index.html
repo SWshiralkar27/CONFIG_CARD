@@ -296,10 +296,12 @@
         .ribbon-right { right: 0; }
         /* The circular gold OPEN button in the ribbon centre */
         .knot {
-            width: 60px; height: 60px; background: var(--gold);
+          position: absolute;
+  left: 50%;
+  top: 50%;  width: 60px; height: 60px; background: var(--gold);
             border-radius: 50%; display: flex; justify-content: center;
             align-items: center; cursor: pointer; font-weight: bold;
-            color: var(--velvet);animation: flicker 0.15s infinite
+            color: var(--velvet);animation: flicker 1s infinite
         }
         /* untied: left ribbon slides left off-screen, right slides right off-screen */
         .untied .ribbon-left  { transform: translateX(-100%); }
