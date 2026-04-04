@@ -736,11 +736,11 @@ body {
          sound  : (reserved for future audio per step) */
     let currentStep = 0;
     const steps = [
-        { id: "kumkum",   prompt: "🔴 Click Kumkum to apply the Tilak",             motion: "none",       },
-        { id: "rice",     prompt: "🌾 Click Rice to sprinkle Akshata (blessings)",   motion: "none",       },
-        { id: "betelnut", prompt: "🟤 Click Betel Nut to offer (rotates right→left)",motion: "orbitRight", },
-        { id: "ring",     prompt: "💍 Click Ring to bless (rotates left→right)",      motion: "orbitLeft",  },
-        { id: "tray",     prompt: "🪔 Click the Tray to do Aarti (circles around)", motion: "orbitRight", },
+        { id: "kumkum",   prompt: "🔴 तिलक लगाने के लिए कुमकुम पर क्लिक करें",             motion: "none",       },
+        { id: "rice",     prompt: "🌾 अक्षत (आशीर्वाद) छिड़कने के लिए चावल पर क्लिक करें",   motion: "none",       },
+        { id: "betelnut", prompt: "🟤 चढ़ाने के लिए सुपारी पर क्लिक करें (दाएँ से बाएँ घूमती है)",motion: "orbitRight", },
+        { id: "ring",     prompt: "💍 आशीर्वाद देने के लिए रिंग पर क्लिक करें (बाएँ से दाएँ घूमती है)",      motion: "orbitLeft",  },
+        { id: "tray",     prompt: "🪔 आरती करने के लिए थाली पर क्लिक करें (गोल घुमाएँ)", motion: "orbitRight", },
     ];
 
 
@@ -953,7 +953,16 @@ body {
         document.getElementById('cloth').classList.add('roll-down');
 
         /* Launch confetti immediately */
-        createConfetti();
+function createConfetti() {
+  // your confetti creation code here
+  console.log("Confetti burst!");
+}
+
+// call once immediately
+createConfetti();
+
+// repeat every 2 seconds
+setInterval(createConfetti, 2000);
 
         /* Play both videos */
         document.getElementById('v1').play();
