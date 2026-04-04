@@ -16,6 +16,9 @@
 
     <!-- UTF-8: support for all characters — English, Devanagari, emojis -->
     <meta charset="UTF-8">
+     <!-- Loads a beautiful Devanagari font from Google -->
+<link href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Hindi&display=swap" rel="stylesheet">
+     <meta name="viewport" ...>
 /*icons for the greeting card */
 
      <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
@@ -40,16 +43,25 @@
          .class → targets a GROUP of elements
          ═══════════════════════════════════════════════════════════════ -->
     <style>
+/* ── GLOBAL COLOUR PALETTE ── */
+
+
+        /* rest of your CSS continues below... */
 
         /* ── GLOBAL COLOUR PALETTE ─────────────────────────────────────
            :root stores reusable colour "variables" — like named paint pots.
            Writing var(--gold) anywhere in CSS uses #FFD700 automatically.
            Change the value here once and it updates everywhere instantly. */
-        :root {
-            --gold:   #FFD700;  /* shiny yellow  — ribbon, borders, buttons */
-            --velvet: #004d40;  /* dark teal      — card doors & backgrounds */
-            --cream:  #fdfaf6;  /* warm off-white — inner stage background   */
-        }
+              :root {
+    --gold:   #FFD700;  /* shiny yellow  — ribbon, borders, buttons */
+    --velvet: #004d40;  /* dark teal      — card doors & backgrounds */
+    --cream:  #fdfaf6;  /* warm off-white — inner stage background   */
+}
+
+/* Font rule comes AFTER :root, separately */
+body {
+    font-family: 'Tiro Devanagari Hindi', serif;
+}
 
         /* ── PAGE BACKGROUND & CENTERING ──────────────────────────────
            html + body fill the full screen.
@@ -547,10 +559,10 @@
         </div>
 
         <!-- ── LEFT DOOR: swings to the left when "open" class added ── -->
-        <div class="door left">FOR</div>
+        <div class="door left">विशेष रूप से </div>
 
         <!-- ── RIGHT DOOR: swings to the right when "open" class added ── -->
-        <div class="door right">YOU</div>
+        <div class="door right">आपके लिए</div>
 
         <!-- ── STAGE: inner cream area, contains all interactive content ── -->
         <div id="stage">
@@ -563,7 +575,7 @@
                  ══════════════════════════════════════════════════ -->
 
             <!-- Title shown above the aukshan area -->
-            <div id="aukshan-title">🙏 Virtual Aukshan Ceremony 🙏</div>
+            <div id="aukshan-title">🙏 वर्चुअल औक्षन समारोह 🙏</div>
 
             <!-- Container holding all 5 ritual items + hand cursor.
                  Each item starts display:none — JS shows them one at a time. -->
@@ -610,7 +622,7 @@
                  Hidden until aukshan finishes. JS sets display:block
                  and fades it in after aukshan completion.
                  ══════════════════════════════════════════════════ -->
-            <div id="side-prompt">"Make a wish and blow off the candles"</div>
+            <div id="side-prompt">"ईश्वर से प्रार्थना कर और मोमबत्तियों को बुझा दें।"</div>
 
             <!-- ══════════════════════════════════════════════════
                  BIRTHDAY CAKE
@@ -635,7 +647,7 @@
 
             <!-- "Eat my darling" text — appears 2 seconds after candles blown.
                  Clicking it triggers the grand finale screen. -->
-            <div id="eat-prompt" onclick="revealFinale()">eat my darling</div>
+            <div id="eat-prompt" onclick="revealFinale()">अब इसे ग्रहण करो</div>
 
         </div>
         <!-- end of #stage -->
@@ -648,13 +660,13 @@
         <div id="cloth">
 
             <!-- Birthday greeting text -->
-            <h2>HAPPY BIRTHDAY</h2>
+            <h2>जन्मदिन की शुभकामनाएँ</h2>
 
             <!-- Name with heartbeat animation (pulses gently forever) -->
-            <h1 class="heartbeat-text">DEAR <p class="rainbow-text">XXX</p></h1>
+            <h1 class="heartbeat-text">प्रिय <p class="rainbow-text">XXX</p></h1>
 
             <!-- Loving message below the name -->
-            <p>My LOVE &amp; My Darling</p>
+            <p>मेरे प्यारे मेरे हमदम </p>
 
             <!-- Two looping videos side by side
                  .loop : video loops endlessly
