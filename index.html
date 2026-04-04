@@ -990,29 +990,27 @@ setInterval(createConfetti, 2000);
          so they fall at different times — not all at once.
          Each piece is removed from the page after 3 seconds (cleanup).
     ══════════════════════════════════════════════════════════════════ */
-    function createConfetti() {
-        const colors    = ["#FFD700", "#FF4D4D", "#4DFF88", "#4DB8FF", "#FF66FF"];
-        const container = document.getElementById('cloth'); /* falls inside red screen */
+        function createConfetti() {
+      const colors    = ["#FFD700", "#FF4D4D", "#4DFF88", "#4DB8FF", "#FF66FF"];
+      const container = document.getElementById('cloth');
 
-        for (let i = 0; i < 40; i++) {
-            const confetti = document.createElement("div");
-            confetti.classList.add("confetti"); /* CSS handles the fall animation */
+      for (let i = 0; i < 40; i++) {
+        const confetti = document.createElement("div");
+        confetti.classList.add("confetti");
 
-            /* Random horizontal starting position across the screen */
-            confetti.style.left = Math.random() * 100 + "%";
+        confetti.style.left = Math.random() * 100 + "%";
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.animationDelay = Math.random() * 1 + "s";
 
-            /* Random colour from the palette */
-            confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        container.appendChild(confetti);
 
-            /* Random delay: pieces fall at staggered times, not all at once */
-            confetti.style.animationDelay = Math.random() * 1 + "s";
-
-            container.appendChild(confetti); /* add to the red finale screen */
-
-            /* Remove this confetti piece after its animation completes */
-            setTimeout(() => confetti.remove(), 3000);
-        }
+        setTimeout(() => confetti.remove(), 3000);
+      }
     }
+
+    // trigger once and repeat
+    createConfetti();
+    setInterval(createConfetti, 2000);
 
 </script>
 
