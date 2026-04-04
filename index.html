@@ -300,13 +300,48 @@
         .ribbon-left  { left: 0;  }
         .ribbon-right { right: 0; }
         /* The circular gold OPEN button in the ribbon centre */
-        .knot {
-          
-  width: 60px; height: 60px; background: var(--gold);
-            border-radius: 50%; display: flex; justify-content: center;
-            align-items: center; cursor: pointer; font-weight: bold;
-            color: var(--velvet);animation: flicker 1s infinite
-        }
+        /* ── BOW KNOT ───────────────────────────────────────────────────
+   Built from 3 parts:
+   .knot          = the wrapper, centered by ribbon-container's flexbox
+   .knot::before  = LEFT loop of the bow
+   .knot::after   = RIGHT loop of the bow
+   The small center square is the .knot div itself.
+   All three together form a bow shape like a gift ribbon knot. */
+
+.knot {
+    position: relative;
+    width: 16px; height: 16px;         /* small square center of the bow */
+    background: var(--gold);
+    border: 2px solid #8B6000;         /* darker gold outline on center knot */
+    border-radius: 3px;
+    cursor: pointer;
+    z-index: 310;
+    flex-shrink: 0;
+}
+
+/* LEFT loop of the bow */
+.knot::before {
+    content: '';
+    position: absolute;
+    width: 36px; height: 26px;
+    background: var(--gold);
+    border: 2px solid #8B6000;         /* dark outline like the pink bow image */
+    border-radius: 50% 10% 50% 10%;   /* teardrop shape pointing right */
+    top: 50%; right: 100%;             /* sits to the left of the center knot */
+    transform: translateY(-50%) rotate(10deg);
+}
+
+/* RIGHT loop of the bow */
+.knot::after {
+    content: '';
+    position: absolute;
+    width: 36px; height: 26px;
+    background: var(--gold);
+    border: 2px solid #8B6000;
+    border-radius: 10% 50% 10% 50%;   /* teardrop shape pointing left */
+    top: 50%; left: 100%;              /* sits to the right of the center knot */
+    transform: translateY(-50%) rotate(-10deg);
+}
         /* untied: left ribbon slides left off-screen, right slides right off-screen */
         .untied .ribbon-left  { transform: translateX(-100%); }
         .untied .ribbon-right { transform: translateX(100%);  }
@@ -503,7 +538,7 @@
              Clicking anywhere on it calls untieRibbon() ── -->
         <div id="ribbon-container" onclick="untieRibbon()">
             <div class="ribbon-half ribbon-left"></div>   <!-- left gold strip  -->
-            <div class="knot">OPEN</div>                  <!-- gold circle knot -->
+            <div class="knot"></div>                  <!-- gold circle knot -->
             <div class="ribbon-half ribbon-right"></div>  <!-- right gold strip -->
         </div>
 
