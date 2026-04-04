@@ -310,37 +310,41 @@
 
 .knot {
     position: relative;
-    width: 16px; height: 16px;         /* small square center of the bow */
-    background: var(--gold);
-    border: 2px solid #8B6000;         /* darker gold outline on center knot */
-    border-radius: 3px;
+    width: 20px;                        /* narrow center knot between ribbons */
+    height: 40px;                       /* MATCHES ribbon height exactly       */
+    background: #e6ac00;                /* slightly darker gold — center knot  */
+    border-left:  2px solid #8B6000;    /* dark outline on sides only          */
+    border-right: 2px solid #8B6000;
     cursor: pointer;
     z-index: 310;
     flex-shrink: 0;
 }
-
 /* LEFT loop of the bow */
 .knot::before {
     content: '';
     position: absolute;
-    width: 36px; height: 26px;
+    width: 50px;                        /* loop width — proportional to ribbon */
+    height: 44px;                       /* slightly taller than ribbon         */
     background: var(--gold);
-    border: 2px solid #8B6000;         /* dark outline like the pink bow image */
-    border-radius: 50% 10% 50% 10%;   /* teardrop shape pointing right */
-    top: 50%; right: 100%;             /* sits to the left of the center knot */
-    transform: translateY(-50%) rotate(10deg);
+    border: 2px solid #8B6000;          /* dark outline like the reference bow */
+    border-radius: 50% 10% 50% 10%;    /* teardrop pointing inward to right   */
+    top: 50%;
+    right: 100%;                        /* attached to left edge of knot       */
+    transform: translateY(-50%) rotate(8deg);
 }
 
 /* RIGHT loop of the bow */
 .knot::after {
     content: '';
     position: absolute;
-    width: 36px; height: 26px;
+    width: 50px;
+    height: 44px;
     background: var(--gold);
     border: 2px solid #8B6000;
-    border-radius: 10% 50% 10% 50%;   /* teardrop shape pointing left */
-    top: 50%; left: 100%;              /* sits to the right of the center knot */
-    transform: translateY(-50%) rotate(-10deg);
+    border-radius: 10% 50% 10% 50%;    /* teardrop pointing inward to left    */
+    top: 50%;
+    left: 100%;                         /* attached to right edge of knot      */
+    transform: translateY(-50%) rotate(-8deg);
 }
         /* untied: left ribbon slides left off-screen, right slides right off-screen */
         .untied .ribbon-left  { transform: translateX(-100%); }
