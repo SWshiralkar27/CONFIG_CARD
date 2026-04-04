@@ -301,9 +301,8 @@
         .ribbon-right { right: 0; }
         /* The circular gold OPEN button in the ribbon centre */
         .knot {
-          position: absolute;
-  left: 50%;
-  top: 50%;  width: 60px; height: 60px; background: var(--gold);
+          
+  width: 60px; height: 60px; background: var(--gold);
             border-radius: 50%; display: flex; justify-content: center;
             align-items: center; cursor: pointer; font-weight: bold;
             color: var(--velvet);animation: flicker 1s infinite
@@ -441,13 +440,13 @@
            translateX(100px) = orbit radius (how far from center it goes)
            rotate(360deg) = full circle. Opposite rotation keeps item upright. */
         @keyframes orbitRight {
-            0%   { transform: rotate(0deg)    translateX(100px) rotate(0deg);    }
-            100% { transform: rotate(360deg)  translateX(100px) rotate(-360deg); }
-        }
+            0%   { transform: translate(-50%,-50%) rotate(0deg)    translateX(100px) rotate(0deg);    }
+    100% { transform: translate(-50%,-50%) rotate(360deg)  translateX(100px) rotate(-360deg); } }
+        
         @keyframes orbitLeft {
-            0%   { transform: rotate(0deg)    translateX(100px) rotate(0deg);    }
-            100% { transform: rotate(-360deg) translateX(100px) rotate(360deg);  }
-        }
+    0%   { transform: translate(-50%,-50%) rotate(0deg)    translateX(100px) rotate(0deg);    }
+    100% { transform: translate(-50%,-50%) rotate(-360deg) translateX(100px) rotate(360deg);  }
+}
 
         /* ── AUKSHAN TITLE ─────────────────────────────────────────────
            The small heading "🙏 Virtual Aukshan" shown above the ritual area. */
