@@ -333,7 +333,9 @@ body {
             display: flex; justify-content: center; align-items: center;
         }
         /* Each ribbon strip covers 50% width of the card */
-        .ribbon-half { position: absolute; width: 50%; height: 40px; background: var(--gold); transition: 1s; }
+        .ribbon-half { position: absolute; width: 50%; height: 40px; background: var(--gold); transition: 1s; border-top: 3px solid #FF0000;    /* Bright Red Top Border */
+    border-bottom: 3px solid #FF0000; /* Bright Red Bottom Border */
+    box-shadow: 0 0 15px #FF0000;     /* Red Neon Glow */ }
         .ribbon-left  { left: 0;  }
         .ribbon-right { right: 0; }
         /* The circular gold OPEN button in the ribbon centre */
@@ -351,7 +353,10 @@ body {
     height: 40px;                       /* MATCHES ribbon height exactly       */
     background: #e6ac00;                /* slightly darker gold — center knot  */
     border-left:  2px solid #8B6000;    /* dark outline on sides only          */
-    border-right: 2px solid #8B6000;
+    border-right: 2px solid #8B6000; /* ── UPDATE THESE PARAMETERS ── */
+    border: 2px solid #FF0000;    /* Changed from dark gold to Red */
+    box-shadow: 0 0 20px #FF0000; /* Stronger Red Glow */
+    /* ─────────────────────────── */
     cursor: pointer;
     z-index: 310;
     flex-shrink: 0;
@@ -363,8 +368,9 @@ body {
     width: 50px;                        /* loop width — proportional to ribbon */
     height: 44px;                       /* slightly taller than ribbon         */
     background: var(--gold);
-    border: 2px solid #8B6000;          /* dark outline like the reference bow */
-    border-radius: 50% 10% 50% 10%;    /* teardrop pointing inward to right   */
+    border: 2px solid #FF0000;          /* dark outline like the reference bow */
+    box-shadow: 0 0 10px #FF0000; /* Adds glow to the loops */
+     border-radius: 50% 10% 50% 10%;    /* teardrop pointing inward to right   */
     top: 50%;
     right: 100%;                        /* attached to left edge of knot       */
     transform: translateY(-50%) rotate(8deg);
@@ -377,11 +383,11 @@ body {
     width: 50px;
     height: 44px;
     background: var(--gold);
-    border: 2px solid #8B6000;
+    border: 2px solid #FF0000;
     border-radius: 10% 50% 10% 50%;    /* teardrop pointing inward to left    */
     top: 50%;
     left: 100%;                         /* attached to right edge of knot      */
-    transform: translateY(-50%) rotate(-8deg);
+    transform: translateY(-50%) rotate(-8deg);box-shadow: 0 0 10px #FF0000; /* Adds glow to the loops */
 }
         /* untied: left ribbon slides left off-screen, right slides right off-screen */
         .untied .ribbon-left  { transform: translateX(-100%); }
