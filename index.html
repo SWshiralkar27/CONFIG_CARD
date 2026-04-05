@@ -57,7 +57,21 @@
     --velvet: #004d40;  /* dark teal      — card doors & backgrounds */
     --cream:  #fdfaf6;  /* warm off-white — inner stage background   */
 }
-
+/* ── TILAK MARK ── */
+#tilak-mark {
+    position: absolute;
+    top: 45%; /* Positioned where a forehead would be on the stage */
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    width: 12px;
+    height: 25px;
+    background: radial-gradient(#d40000, #8b0000);
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    box-shadow: 0 0 8px rgba(212, 0, 0, 0.6);
+    z-index: 15; /* Sits on the stage, behind the floating items */
+    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    pointer-events: none;
+}
 /* Font rule comes AFTER :root, separately */
 body {
     font-family: 'Tiro Devanagari Hindi', serif;
@@ -589,7 +603,7 @@ function createJasmineShower() {
 
             <!-- Title shown above the aukshan area -->
             <div id="aukshan-title">🙏 वर्चुअल औक्षन समारोह 🙏</div>
-
+<div id="tilak-mark"></div>
             <!-- Container holding all 5 ritual items + hand cursor.
                  Each item starts display:none — JS shows them one at a time. -->
             <div id="aukshan-container">
@@ -860,21 +874,65 @@ function promptNext() {
     }
 
     function performStep(step) {
-        const item = document.getElementById(step.id);
-        document.getElementById('cursor').style.display = 'none';
+    const item = document.getElementById(step.id);
+    document.getElementById('cursor').style.display = 'none';
 
-        if (step.motion !== 'none') {
-            item.style.animation = step.motion + ' 3s linear';
-            setTimeout(() => {
-                finalizeStep(item);
-            }, 3000);
-        } else {
-            item.style.animation = 'clickEffect 0.4s ease';
-            setTimeout(() => {
-                finalizeStep(item);
-            }, 1500);
-        }
+    // ── FEATURE 1: Tilak appears when Kumkum is clicked ──
+    if (step.id === "kumkum") {
+        const tilak = document.getElementById('tilak-mark');
+        tilak.style.transform = 'translate(-50%, -50%) scale(1)';
     }
+
+    // ── FEATURE 2: Rice shower when Rice is clicked ──
+    if (step.id === "rice") {
+        createRiceShower();
+    }
+
+    // Standard animation logic
+    if (step.motion !== 'none') {
+        item.style.animation = step.motion + ' 3s linear';
+        setTimeout(() => {
+            finalizeStep(item);
+        }, 3000);
+    } else {
+        item.style.animation = 'clickEffect 0.4s ease';
+        setTimeout(() => {
+            finalizeStep(item);
+        }, 1200);
+    }
+}
+
+// Mimics the Jasmine Shower but with rice grain settings
+function createRiceShower() {
+    for (let i = 0; i < 60; i++) {
+        setTimeout(() => {
+            const grain = document.createElement('div');
+            grain.style.position = 'fixed';
+            grain.style.width = '4px';
+            grain.style.height = '8px';
+            grain.style.backgroundColor = '#fffef0'; // Off-white rice color
+            grain.style.borderRadius = '50%';
+            grain.style.left = Math.random() * 100 + 'vw';
+            grain.style.top = '-20px';
+            grain.style.zIndex = '1000';
+            grain.style.pointerEvents = 'none';
+            
+            document.body.appendChild(grain);
+
+            const duration = Math.random() * 1000 + 1500; 
+
+            grain.animate([
+                { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
+                { transform: `translateY(110vh) rotate(${Math.random() * 360}deg)`, opacity: 0.5 }
+            ], {
+                duration: duration,
+                easing: 'ease-in'
+            });
+
+            setTimeout(() => grain.remove(), duration);
+        }, i * 30);
+    }
+}
 
     function finalizeStep(item) {
         item.style.display = 'none';
