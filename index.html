@@ -735,298 +735,170 @@ function createJasmineShower() {
      8. (after 60s)     → Replay button fades in
      ═══════════════════════════════════════════════════════════════════ -->
 <script>
-
-    /* ── LOCK FLAG ──────────────────────────────────────────────────────
-       Prevents extinguish() from running more than once if user
-       taps multiple candles rapidly. Once true, function exits early. */
+    /* ── STATE FLAGS ────────────────────────────────────────────────── */
     let musicStarted = false;
-/* Start the jasmine shower at the same moment doors open */
-createJasmineShower();
-    /* ── AUKSHAN STEP TRACKER ───────────────────────────────────────────
-       currentStep tracks which ritual item we're on (0 through 4).
-       The steps array defines all 5 ritual items with:
-         id     : the HTML element ID of the image
-         prompt : instruction text shown to the user at that step
-         motion : CSS animation name — "none", "orbitRight", or "orbitLeft"
-         sound  : (reserved for future audio per step) */
     let currentStep = 0;
+    let confettiTimer = null;
+
     const steps = [
-        { id: "kumkum",   prompt: "🔴 तिलक लगाने के लिए कुमकुम पर क्लिक करें",             motion: "none",       },
-        { id: "rice",     prompt: "🌾 अक्षत (आशीर्वाद) छिड़कने के लिए चावल पर क्लिक करें",   motion: "none",       },
-        { id: "betelnut", prompt: "🟤 चढ़ाने के लिए सुपारी पर क्लिक करें (दाएँ से बाएँ घूमती है)",motion: "orbitRight", },
-        { id: "ring",     prompt: "💍 आशीर्वाद देने के लिए रिंग पर क्लिक करें (बाएँ से दाएँ घूमती है)",      motion: "orbitLeft",  },
-        { id: "tray",     prompt: "🪔 आरती करने के लिए थाली पर क्लिक करें (गोल घुमाएँ)", motion: "orbitRight", },
+        { id: "kumkum",   prompt: "🔴 तिलक लगाने के लिए कुमकुम पर क्लिक करें",           motion: "none" },
+        { id: "rice",     prompt: "🌾 अक्षत (आशीर्वाद) छिड़कने के लिए चावल पर क्लिक करें",   motion: "none" },
+        { id: "betelnut", prompt: "🟤 चढ़ाने के लिए सुपारी पर क्लिक करें",                motion: "orbitRight" },
+        { id: "ring",     prompt: "💍 आशीर्वाद देने के लिए रिंग पर क्लिक करें",              motion: "orbitLeft" },
+        { id: "tray",     prompt: "🪔 आरती करने के लिए थाली पर क्लिक करें",                motion: "orbitRight" },
     ];
 
-
-    /* ══════════════════════════════════════════════════════════════════
-       STEP 1: untieRibbon()
-       TRIGGERED BY: user clicking the ribbon / OPEN knot
-       WHAT IT DOES:
-         - Adds "untied" class → CSS slides both ribbon strips off-screen
-           and shrinks the knot to zero (see .untied rules in CSS)
-         - Waits 800ms for animation to finish
-         - Hides the ribbon container entirely (display:none)
-         - Calls openCard() to begin the card experience
-    ══════════════════════════════════════════════════════════════════ */
+    /* ── STEP 1: Ribbon ── */
     function untieRibbon() {
         document.getElementById('ribbon-container').classList.add('untied');
         setTimeout(() => {
             document.getElementById('ribbon-container').style.display = 'none';
-            openCard(); /* move to next step */
-        }, 800); /* 800ms = time for ribbon slide animation to finish */
+            openCard(); 
+        }, 800);
     }
 
-
-    /* ══════════════════════════════════════════════════════════════════
-       STEP 2: openCard()
-       TRIGGERED BY: untieRibbon() calling it automatically
-       WHAT IT DOES:
-         - Adds "open" class to #card → CSS rotates both doors open in 3D
-         - Shows the aukshan title and container
-         - Calls promptNext() to begin the first ritual step
-       NOTE: Cake and candles stay hidden here — they only appear
-             AFTER all 5 aukshan steps are completed.
-    ══════════════════════════════════════════════════════════════════ */
+    /* ── STEP 2: Open Doors & Start Flowers ── */
     function openCard() {
-        /* Swing both doors open via CSS */
         document.getElementById('card').classList.add('open');
+        
+        // Flowers start ONLY when doors open
+        if (typeof createJasmineShower === "function") {
+            createJasmineShower();
+        }
 
-        /* Show the aukshan title and ritual container */
-        document.getElementById('aukshan-title').style.display     = 'block';
+        document.getElementById('aukshan-title').style.display = 'block';
         document.getElementById('aukshan-container').style.display = 'block';
 
-        /* Begin the first ritual step after a short pause for doors to open */
         setTimeout(() => promptNext(), 600);
     }
 
-
-    /* ══════════════════════════════════════════════════════════════════
-       STEP 3: promptNext()
-       TRIGGERED BY: openCard() and at the end of each performStep()
-       WHAT IT DOES:
-         - If there are still ritual steps remaining:
-             • Shows the current ritual item image
-             • Updates the instruction text
-             • Moves the blinking hand cursor toward the item
-         - If all 5 steps are done:
-             • Shows "Aukshan completed!" message
-             • Hides the cursor and aukshan container
-             • Reveals the birthday cake, candles, and side-prompt
-    ══════════════════════════════════════════════════════════════════ */
+    /* ── STEP 3: Ritual Flow ── */
     function promptNext() {
-
+        const instructionEl = document.getElementById('aukshan-instruction');
+        
         if (currentStep < steps.length) {
-
-            /* There are still steps remaining — show the current item */
             const step = steps[currentStep];
             const item = document.getElementById(step.id);
-            item.style.display = 'block'; /* make the ritual item visible */
-
-            /* Update the instruction text below the aukshan container */
-            document.getElementById('aukshan-instruction').innerText = step.prompt;
-
-            /* Move the blinking hand cursor to point at the item */
+            item.style.display = 'block'; 
+            instructionEl.innerText = step.prompt;
             moveCursorToItem(item);
-
         } else {
-
-            /* All 5 steps done — aukshan is complete! */
-            document.getElementById('aukshan-instruction').innerText = '🙏 Aukshan completed! Blessings given 🙏';
+            // Ritual Complete
+            instructionEl.innerText = '🙏 Aukshan completed! Blessings given 🙏';
             document.getElementById('cursor').style.display = 'none';
 
-            /* Hide the aukshan area and title after a short pause */
             setTimeout(() => {
                 document.getElementById('aukshan-container').style.display = 'none';
-                document.getElementById('aukshan-title').style.display     = 'none';
-                document.getElementById('aukshan-instruction').style.display = 'none';
+                document.getElementById('aukshan-title').style.display = 'none';
+                instructionEl.style.display = 'none';
 
-                /* Reveal the birthday cake and candles */
+                // Reveal Cake & Center Prompt
                 const cake = document.getElementById('cakeNode');
-                cake.style.display = 'block'; /* cake appears */
-
-                /* Fade in the "make a wish" instruction prompt */
+                cake.style.display = 'block'; 
+                
                 const prompt = document.getElementById('side-prompt');
-                prompt.style.display  = 'block';
-                prompt.style.opacity  = '1';
-
-            }, 1500); /* 1.5 second pause to let user read the completion message */
+                prompt.style.display = 'block';
+                // Trigger the CSS transition
+                setTimeout(() => { prompt.style.opacity = '1'; }, 50);
+            }, 1500);
         }
     }
 
-
-    /* ══════════════════════════════════════════════════════════════════
-       HELPER: moveCursorToItem(item)
-       TRIGGERED BY: promptNext() at each step
-       WHAT IT DOES:
-         Moves the blinking hand cursor element to sit just beside
-         the current ritual item, so the user knows where to click.
-         Uses getBoundingClientRect() to get the item's actual screen position.
-    ══════════════════════════════════════════════════════════════════ */
     function moveCursorToItem(item) {
-        const cursor    = document.getElementById('cursor');
+        const cursor = document.getElementById('cursor');
         const container = document.getElementById('aukshan-container');
-
-        /* Get the pixel positions of the item and the container on screen */
-        const itemRect      = item.getBoundingClientRect();
+        const itemRect = item.getBoundingClientRect();
         const containerRect = container.getBoundingClientRect();
 
-        /* Show and smoothly move the cursor to just right of the item */
-        cursor.style.display    = 'block';
-        cursor.style.transition = 'all 0.8s ease';
+        cursor.style.display = 'block';
         cursor.style.left = (itemRect.left - containerRect.left + itemRect.width + 5) + 'px';
-        cursor.style.top  = (itemRect.top  - containerRect.top)  + 'px';
+        cursor.style.top = (itemRect.top - containerRect.top) + 'px';
     }
 
-
-    /* ══════════════════════════════════════════════════════════════════
-       STEP 4: performStep(step)
-       TRIGGERED BY: user clicking any ritual item
-       WHAT IT DOES:
-         - Hides the cursor while animation plays
-         - If item has an orbit motion: plays the orbit animation for 3s,
-           then hides the item and moves to next step
-         - If item has no motion (kumkum, rice): waits 1.5s,
-           hides the item, and moves to next step
-         After each step: currentStep++ and promptNext() is called.
-    ══════════════════════════════════════════════════════════════════ */
     function performStep(step) {
-        const item   = document.getElementById(step.id);
-        const cursor = document.getElementById('cursor');
-
-        cursor.style.display = 'none'; /* hide cursor during animation */
+        const item = document.getElementById(step.id);
+        document.getElementById('cursor').style.display = 'none';
 
         if (step.motion !== 'none') {
-            /* Item has an orbit animation — apply it and wait 3 seconds */
             item.style.animation = step.motion + ' 3s linear';
             setTimeout(() => {
-                item.style.animation = ''; /* clear the animation */
-                item.style.display   = 'none'; /* hide item */
-                currentStep++;  /* advance to next step */
-                promptNext();   /* show next ritual item */
-            }, 3000); /* 3000ms = 3 seconds orbit duration */
+                finalizeStep(item);
+            }, 3000);
         } else {
-            /* No orbit — just click-and-wait for a moment */
             item.style.animation = 'clickEffect 0.4s ease';
             setTimeout(() => {
-                item.style.display   = 'none'; /* hide item */
-                currentStep++;  /* advance to next step */
-                promptNext();   /* show next ritual item */
-            }, 1500); /* 1500ms = 1.5 second pause before moving on */
+                finalizeStep(item);
+            }, 1500);
         }
     }
 
-    /* Attach click handlers to each ritual item.
-       When clicked, each item runs performStep() with its own step data. */
+    function finalizeStep(item) {
+        item.style.display = 'none';
+        item.style.animation = '';
+        currentStep++;
+        promptNext();
+    }
+
+    // Attach listeners once
     steps.forEach(step => {
-        document.getElementById(step.id).addEventListener('click', () => performStep(step));
+        const el = document.getElementById(step.id);
+        if(el) el.addEventListener('click', () => performStep(step));
     });
 
-
-    /* ══════════════════════════════════════════════════════════════════
-       STEP 5: extinguish()
-       TRIGGERED BY: user clicking any candle
-       WHAT IT DOES:
-         - Lock flag check: does nothing if already triggered (prevents double fire)
-         - Adds "extinguished" class to ALL candles → CSS hides all flames
-         - Hides the side-prompt (no longer needed)
-         - Plays the birthday song
-         - After 2 seconds: shows the "eat my darling" prompt
-    ══════════════════════════════════════════════════════════════════ */
+    /* ── STEP 4: Candles ── */
     function extinguish() {
-        if (musicStarted) return; /* prevent double trigger */
+        if (musicStarted) return;
         musicStarted = true;
 
-        /* Blow out all 3 candles simultaneously */
         document.querySelectorAll('.candle').forEach(c => c.classList.add('extinguished'));
+        
+        // Fade out the center prompt
+        const sidePrompt = document.getElementById('side-prompt');
+        sidePrompt.style.opacity = '0';
+        setTimeout(() => { sidePrompt.style.display = 'none'; }, 1000);
 
-        /* Hide the candle instruction */
-        document.getElementById('side-prompt').style.opacity = '0';
-
-        /* Start the birthday song */
         document.getElementById('bdaySong').play().catch(() => {});
 
-        /* After 2 seconds, reveal the "eat" prompt */
         setTimeout(() => {
             document.getElementById('eat-prompt').style.display = 'block';
         }, 2000);
     }
 
-
-    /* ══════════════════════════════════════════════════════════════════
-       STEP 6: revealFinale()
-       TRIGGERED BY: user clicking "eat my darling"
-       WHAT IT DOES:
-         - Adds "roll-down" class to #cloth → red screen slides down from above
-         - Plays both looping videos
-         - Creates the confetti burst
-         - After 3 seconds: GIFs fade in
-         - After 60 seconds: Replay button fades in
-    ══════════════════════════════════════════════════════════════════ */
+    /* ── STEP 5: Finale ── */
     function revealFinale() {
-        /* Slide the red birthday screen down */
         document.getElementById('cloth').classList.add('roll-down');
+        
+        // Start Confetti loop
+        createConfetti();
+        confettiTimer = setInterval(createConfetti, 2000);
 
-        /* Launch confetti immediately */
-function createConfetti() {
-  // your confetti creation code here
-  console.log("Confetti burst!");
-}
-
-// call once immediately
-createConfetti();
-
-// repeat every 2 seconds
-setInterval(createConfetti, 2000);
-
-        /* Play both videos */
         document.getElementById('v1').play();
         document.getElementById('v2').play();
 
-        /* After 3 seconds, fade in both dancing GIFs */
         setTimeout(() => {
-            document.getElementById('bubu-gif').style.opacity   = '1';
+            document.getElementById('bubu-gif').style.opacity = '1';
             document.getElementById('bubu-gif-2').style.opacity = '1';
         }, 3000);
 
-        /* After 60 seconds, fade in the Replay button */
         setTimeout(() => {
             document.getElementById('replay-btn').style.opacity = '1';
-        }, 60000);
+        }, 15000); // Reduced to 15s so user doesn't wait too long
     }
 
+    function createConfetti() {
+        const colors = ["#FFD700", "#FF4D4D", "#4DFF88", "#4DB8FF", "#FF66FF"];
+        const container = document.getElementById('cloth');
 
-    /* ══════════════════════════════════════════════════════════════════
-       HELPER: createConfetti()
-       TRIGGERED BY: revealFinale()
-       WHAT IT DOES:
-         Creates 40 colourful confetti pieces inside the red #cloth screen.
-         Each piece gets random colour, position, and animation delay
-         so they fall at different times — not all at once.
-         Each piece is removed from the page after 3 seconds (cleanup).
-    ══════════════════════════════════════════════════════════════════ */
-        function createConfetti() {
-      const colors    = ["#FFD700", "#FF4D4D", "#4DFF88", "#4DB8FF", "#FF66FF"];
-      const container = document.getElementById('cloth');
-
-      for (let i = 0; i < 40; i++) {
-        const confetti = document.createElement("div");
-        confetti.classList.add("confetti");
-
-        confetti.style.left = Math.random() * 100 + "%";
-        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-        confetti.style.animationDelay = Math.random() * 1 + "s";
-
-        container.appendChild(confetti);
-
-        setTimeout(() => confetti.remove(), 3000);
-      }
+        for (let i = 0; i < 40; i++) {
+            const confetti = document.createElement("div");
+            confetti.className = "confetti";
+            confetti.style.left = Math.random() * 100 + "%";
+            confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            confetti.style.animationDelay = Math.random() * 1 + "s";
+            container.appendChild(confetti);
+            setTimeout(() => confetti.remove(), 3000);
+        }
     }
-
-    // trigger once and repeat
-    createConfetti();
-    setInterval(createConfetti, 2000);
-
 </script>
 
 </body>
