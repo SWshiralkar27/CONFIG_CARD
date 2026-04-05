@@ -81,11 +81,11 @@ body {
    from above the screen. Starts invisible (opacity:0).
    JavaScript uses the Web Animations API to animate it falling. */
 .petal {
-    position: absolute;
+    position: fixed;
     background-size: contain;
     background-repeat: no-repeat;
     opacity: 0;
-    z-index: 999;
+    z-index: 1000;
     pointer-events: none;
 }
         /* ── CARD FRAME ────────────────────────────────────────────────
@@ -450,8 +450,7 @@ body {
             cursor: pointer;
             transform: translate(-50%, -50%); /* centers it on the container */
             display: none; /* JS shows each item only when it's that item's turn */
-            border-radius: 8px;
-            object-fit: cover;
+            z-index: 500;
         }
 
         /* ── AUKSHAN INSTRUCTION TEXT ──────────────────────────────────
