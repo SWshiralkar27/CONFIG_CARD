@@ -812,37 +812,41 @@ function openCard() {
         }, i * 50); // Burst effect
     }
 }
-    /* ── STEP 3: Ritual Flow ── */
-    function promptNext() {
-        const instructionEl = document.getElementById('aukshan-instruction');
+
+/* ── STEP 3: Ritual Flow ── */
+function promptNext() {
+    const instructionEl = document.getElementById('aukshan-instruction');
+    if (currentStep < steps.length) {
+        const step = steps[currentStep];
+        const item = document.getElementById(step.id);
         
-        if (currentStep < steps.length) {
-            const step = steps[currentStep];
-            const item = document.getElementById(step.id);
-            item.style.display = 'block'; 
-            instructionEl.innerText = step.prompt;
-            moveCursorToItem(item);
-        } else {
-            // Ritual Complete
-            instructionEl.innerText = '🙏 Aukshan completed! Blessings given 🙏';
-            document.getElementById('cursor').style.display = 'none';
+        // Show the item
+        item.style.display = 'block'; 
+        instructionEl.innerText = step.prompt;
+        
+        // CRITICAL FIX: Explicitly attach the click action here
+        item.onclick = () => performStep(step);
+        
+        moveCursorToItem(item);
+    } else {
+        // ... (rest of your existing "Ritual Complete" code)
+        instructionEl.innerText = '🙏 Aukshan completed! Blessings given 🙏';
+        document.getElementById('cursor').style.display = 'none';
 
-            setTimeout(() => {
-                document.getElementById('aukshan-container').style.display = 'none';
-                document.getElementById('aukshan-title').style.display = 'none';
-                instructionEl.style.display = 'none';
+        setTimeout(() => {
+            document.getElementById('aukshan-container').style.display = 'none';
+            document.getElementById('aukshan-title').style.display = 'none';
+            instructionEl.style.display = 'none';
 
-                // Reveal Cake & Center Prompt
-                const cake = document.getElementById('cakeNode');
-                cake.style.display = 'block'; 
-                
-                const prompt = document.getElementById('side-prompt');
-                prompt.style.display = 'block';
-                // Trigger the CSS transition
-                setTimeout(() => { prompt.style.opacity = '1'; }, 50);
-            }, 1500);
-        }
+            const cake = document.getElementById('cakeNode');
+            cake.style.display = 'block'; 
+            
+            const prompt = document.getElementById('side-prompt');
+            prompt.style.display = 'block';
+            setTimeout(() => { prompt.style.opacity = '1'; }, 50);
+        }, 1500);
     }
+}
 
     function moveCursorToItem(item) {
         const cursor = document.getElementById('cursor');
