@@ -749,29 +749,70 @@ function createJasmineShower() {
     ];
 
     /* ── STEP 1: Ribbon ── */
-    function untieRibbon() {
-        document.getElementById('ribbon-container').classList.add('untied');
+    f/* ── STEP 1: Ribbon ── */
+function untieRibbon() {
+    // Start flowers IMMEDIATELY when the ribbon/knot is clicked 
+    if (typeof createJasmineShower === "function") {
+        createJasmineShower();
+    }
+
+    // Start ribbon slide animation [cite: 117, 118]
+    document.getElementById('ribbon-container').classList.add('untied');
+
+    // Wait 800ms for ribbon to slide, then trigger door opening [cite: 214]
+    setTimeout(() => {
+        document.getElementById('ribbon-container').style.display = 'none';
+        openCard(); 
+    }, 800);
+}
+
+/* ── STEP 2: Open Doors ── */
+function openCard() {
+    // Swing doors open (Animation takes 2 seconds) [cite: 32, 37, 38]
+    document.getElementById('card').classList.add('open');
+
+    document.getElementById('aukshan-title').style.display = 'block';
+    document.getElementById('aukshan-container').style.display = 'block';
+
+    // Delay Kumkum/Ritual until doors are fully open (2000ms) [cite: 217]
+    setTimeout(() => promptNext(), 2000); 
+}
+/* step- Jasmine flower Shower */
+     function createJasmineShower() {
+    const flowerImage = "jasmine_flower.png";
+
+    for (let i = 0; i < 40; i++) {
         setTimeout(() => {
-            document.getElementById('ribbon-container').style.display = 'none';
-            openCard(); 
-        }, 800);
+            const petal = document.createElement('div');
+            petal.className = 'petal';
+            petal.style.backgroundImage = `url('${flowerImage}')`;
+            
+            const sizeNum = Math.random() * 20 + 20;
+            petal.style.width = sizeNum + 'px';
+            petal.style.height = sizeNum + 'px';
+            
+            petal.style.position = 'fixed';
+            petal.style.left = Math.random() * 100 + 'vw';
+            petal.style.top = '-50px';
+            petal.style.zIndex = '1000'; // Sits on top of the card and ribbon [cite: 20, 24]
+            
+            document.body.appendChild(petal);
+
+            // Duration overlaps door swing (2.8 seconds)
+            const duration = 2800; 
+
+            petal.animate([
+                { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
+                { transform: `translateY(110vh) rotate(${Math.random() * 360}deg)`, opacity: 0 }
+            ], {
+                duration: duration,
+                easing: 'ease-out'
+            });
+
+            setTimeout(() => petal.remove(), duration);
+        }, i * 50); // Burst effect
     }
-
-    /* ── STEP 2: Open Doors & Start Flowers ── */
-    function openCard() {
-        document.getElementById('card').classList.add('open');
-        
-        // Flowers start ONLY when doors open
-        if (typeof createJasmineShower === "function") {
-            createJasmineShower();
-        }
-
-        document.getElementById('aukshan-title').style.display = 'block';
-        document.getElementById('aukshan-container').style.display = 'block';
-
-        setTimeout(() => promptNext(), 600);
-    }
-
+}
     /* ── STEP 3: Ritual Flow ── */
     function promptNext() {
         const instructionEl = document.getElementById('aukshan-instruction');
