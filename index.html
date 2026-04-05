@@ -76,7 +76,18 @@ body {
             display: flex; justify-content: center; align-items: center;
             font-family: 'Georgia', serif; perspective: 1500px;
         }
-
+/* ── JASMINE FLOWER PETALS ─────────────────────────────
+   Each petal is a <div> created by JavaScript and dropped
+   from above the screen. Starts invisible (opacity:0).
+   JavaScript uses the Web Animations API to animate it falling. */
+.petal {
+    position: absolute;
+    background-size: contain;
+    background-repeat: no-repeat;
+    opacity: 0;
+    z-index: 150;
+    pointer-events: none;
+}
         /* ── CARD FRAME ────────────────────────────────────────────────
            #card-frame is the glowing rainbow border around the card.
            - padding:3px          : thin gap between the rainbow and card inside
@@ -543,7 +554,10 @@ body {
      7. 60 sec later  → Replay button fades in
      ═══════════════════════════════════════════════════════════════════ -->
 <body>
+HELPER: createJasmineShower()
 
+function createJasmineShower() {
+    const flowerImage = "jasmine_flower.png";
 <!-- ── RAINBOW FRAME: outer glowing border around the card ── -->
 <div id="card-frame">
 
@@ -726,7 +740,8 @@ body {
        Prevents extinguish() from running more than once if user
        taps multiple candles rapidly. Once true, function exits early. */
     let musicStarted = false;
-
+/* Start the jasmine shower at the same moment doors open */
+createJasmineShower();
     /* ── AUKSHAN STEP TRACKER ───────────────────────────────────────────
        currentStep tracks which ritual item we're on (0 through 4).
        The steps array defines all 5 ritual items with:
